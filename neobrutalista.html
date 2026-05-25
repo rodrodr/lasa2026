@@ -570,6 +570,9 @@
       color: #0a0a0a;
     }
     .lat-am-item em { font-style: italic; font-weight: 600; }
+    [data-theme="dark"] .lat-am-label,
+    [data-theme="dark"] .lat-am-item,
+    [data-theme="dark"] .lat-am-item em { color: #FAFAF2 !important; }
 
     /* ============================================================
        DIAPOSITIVA 4 — PREGUNTAS
@@ -955,8 +958,8 @@
 
   <section class="slide s-portada" id="slide-1" data-section="Introducción" data-index="1" style="position:relative; overflow:hidden; padding:0;">
     <!-- 3D Diorama Arena in the background -->
-    <div id="canvas-container" style="position:absolute;left:43%;right:0;top:6%;bottom:0;z-index:0;"></div>
-    
+    <div id="canvas-container" style="position:absolute;left:43%;right:0;top:0;bottom:0;z-index:0;"></div>
+
     <div class="slide-content" style="position:relative; z-index:1; pointer-events:none;">
       <!-- HEADER -->
       <header class="portada-topbar interactive">
@@ -1307,7 +1310,7 @@
   scene.background = new THREE.Color(0xFFFEF5); // Marfil
 
   const camera = new THREE.PerspectiveCamera(40, container.offsetWidth / container.offsetHeight, 0.1, 100);
-  camera.position.set(0, 8.8, 24); // 20° de elevación
+  camera.position.set(-3, 8.8, 24); // 20° de elevación, desplazada a la izquierda
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(container.offsetWidth, container.offsetHeight);
@@ -1729,7 +1732,140 @@
       }
   }
 
-  // --- 6. AUTOMATED TRANSITION SYSTEM (GOLD FIGURES <-> FOX RUN) ---
+  // --- 5.5. TRON BIKE MODE (dark mode only) ---
+  function isDarkMode() {
+      return document.documentElement.getAttribute('data-theme') === 'dark';
+  }
+
+  function createTronBike(faction) {
+      const group = new THREE.Group();
+      // Democrat → cyan, Eroder → gold (matching Tron Legacy palette)
+      const neonHex   = faction === 'democrat' ? 0x00d4ff : 0xffaa00;
+      const neonColor = new THREE.Color(neonHex);
+
+      const darkMat = new THREE.MeshStandardMaterial({ color: 0x080808, roughness: 0.15, metalness: 0.95 });
+      const neonMat = new THREE.MeshStandardMaterial({ color: neonHex, emissive: neonHex, emissiveIntensity: 3.5, roughness: 0.05, metalness: 0.9 });
+      const edgeMat = new THREE.LineBasicMaterial({ color: neonHex });
+
+      function addEdges(mesh) {
+          const e = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry), edgeMat.clone());
+          e.position.copy(mesh.position);
+          e.rotation.copy(mesh.rotation);
+          group.add(e);
+      }
+
+      // ── Rear wheel (larger) ─────────────────────────────────────
+      const rearRing = new THREE.Mesh(new THREE.TorusGeometry(0.30, 0.035, 8, 28), neonMat.clone());
+      rearRing.rotation.y = Math.PI / 2;
+      rearRing.position.set(-0.42, 0.30, 0);
+      group.add(rearRing);
+      const rearDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.045, 16), darkMat);
+      rearDisc.rotation.z = Math.PI / 2;
+      rearDisc.position.copy(rearRing.position);
+      group.add(rearDisc);
+
+      // ── Front wheel ─────────────────────────────────────────────
+      const frontRing = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.030, 8, 24), neonMat.clone());
+      frontRing.rotation.y = Math.PI / 2;
+      frontRing.position.set(0.44, 0.24, 0);
+      group.add(frontRing);
+      const frontDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.21, 0.21, 0.04, 16), darkMat);
+      frontDisc.rotation.z = Math.PI / 2;
+      frontDisc.position.copy(frontRing.position);
+      group.add(frontDisc);
+
+      // ── Chassis – very low elongated body ───────────────────────
+      const chassis = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.09, 0.20), darkMat);
+      chassis.position.set(0, 0.16, 0);
+      group.add(chassis);
+
+      // Neon strips along both sides of chassis
+      const stripGeo = new THREE.BoxGeometry(0.88, 0.018, 0.018);
+      const sL = new THREE.Mesh(stripGeo, neonMat.clone()); sL.position.set(0, 0.20,  0.10); group.add(sL);
+      const sR = new THREE.Mesh(stripGeo, neonMat.clone()); sR.position.set(0, 0.20, -0.10); group.add(sR);
+      const sB = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.018, 0.018), neonMat.clone()); sB.position.set(0, 0.12, 0); group.add(sB);
+
+      // ── Cockpit fairing ─────────────────────────────────────────
+      const fairingGeo = new THREE.ConeGeometry(0.10, 0.30, 5);
+      const fairing = new THREE.Mesh(fairingGeo, darkMat);
+      fairing.rotation.z = -Math.PI / 2;
+      fairing.position.set(0.57, 0.20, 0);
+      group.add(fairing);
+
+      // ── Rider (hunched silhouette) ───────────────────────────────
+      const riderBody = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.22, 0.16), darkMat);
+      riderBody.position.set(0.02, 0.37, 0);
+      riderBody.rotation.x = 0.35;
+      group.add(riderBody); addEdges(riderBody);
+
+      const helmet = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.13, 0.13), darkMat);
+      helmet.position.set(0.14, 0.52, 0);
+      group.add(helmet); addEdges(helmet);
+
+      // Visor neon slit
+      const visor = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.03, 0.09), neonMat.clone());
+      visor.position.set(0.21, 0.53, 0);
+      group.add(visor);
+
+      group.userData.neonColor = neonColor;
+      return group;
+  }
+
+  const TRON_TRAIL_MAX  = 90;
+  const TRON_TRAIL_W    = 0.28; // ribbon half-width
+
+  function createTronTrail(neonColor) {
+      // 2 vertices per point → triangle-strip ribbon on the ground
+      const posArr = new Float32Array(TRON_TRAIL_MAX * 2 * 3);
+      const colArr = new Float32Array(TRON_TRAIL_MAX * 2 * 3);
+      const idxArr = [];
+      for (let i = 0; i < TRON_TRAIL_MAX - 1; i++) {
+          const b = i * 2;
+          idxArr.push(b, b+1, b+2,  b+1, b+3, b+2);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
+      geo.setAttribute('color',    new THREE.BufferAttribute(colArr, 3));
+      geo.setIndex(idxArr);
+      geo.setDrawRange(0, 0);
+      const mat = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
+      const mesh = new THREE.Mesh(geo, mat);
+      scene.add(mesh);
+      return { mesh, geo, posArr, colArr, points: [], neonColor };
+  }
+
+  function updateTronTrail(trail, pos, dir) {
+      // Perpendicular to travel direction on XZ plane
+      const perp = dir ? new THREE.Vector3(-dir.z, 0, dir.x).normalize() : new THREE.Vector3(0, 0, 1);
+      const hw = TRON_TRAIL_W / 2;
+      trail.points.unshift({
+          L: new THREE.Vector3(pos.x + perp.x * hw, 0.012, pos.z + perp.z * hw),
+          R: new THREE.Vector3(pos.x - perp.x * hw, 0.012, pos.z - perp.z * hw)
+      });
+      if (trail.points.length > TRON_TRAIL_MAX) trail.points.pop();
+
+      const n = trail.points.length;
+      const r = trail.neonColor.r, g = trail.neonColor.g, b = trail.neonColor.b;
+      for (let i = 0; i < n; i++) {
+          const bright = Math.pow(1 - i / Math.max(n - 1, 1), 1.6);
+          const vi = i * 2;
+          trail.posArr[vi*3]   = trail.points[i].L.x; trail.posArr[vi*3+1] = trail.points[i].L.y; trail.posArr[vi*3+2] = trail.points[i].L.z;
+          trail.colArr[vi*3]   = r * bright;           trail.colArr[vi*3+1] = g * bright;           trail.colArr[vi*3+2] = b * bright;
+          trail.posArr[(vi+1)*3]   = trail.points[i].R.x; trail.posArr[(vi+1)*3+1] = trail.points[i].R.y; trail.posArr[(vi+1)*3+2] = trail.points[i].R.z;
+          trail.colArr[(vi+1)*3]   = r * bright;           trail.colArr[(vi+1)*3+1] = g * bright;           trail.colArr[(vi+1)*3+2] = b * bright;
+      }
+      trail.geo.attributes.position.needsUpdate = true;
+      trail.geo.attributes.color.needsUpdate    = true;
+      trail.geo.setDrawRange(0, Math.max(0, (n - 1) * 6));
+  }
+
+  function disposeTronTrail(trail) {
+      scene.remove(trail.mesh);
+      trail.geo.dispose();
+      trail.mesh.material.dispose();
+  }
+
+  // --- 6. AUTOMATED TRANSITION SYSTEM (GOLD FIGURES <-> FOX RUN / TRON BIKE) ---
   const activeTransmutations = [];
 
   function triggerOpportunistMove(oppObj, targetSector, targetSlot) {
@@ -1748,12 +1884,22 @@
 
       const startPos = new THREE.Vector3().copy(oppObj.mesh.position);
       const endPos = new THREE.Vector3().copy(targetSlot.position);
-      
-      // Spawn running polygonal Fox
-      const foxMesh = createPolygonalFox();
-      foxMesh.position.copy(startPos);
-      foxMesh.scale.setScalar(0.01);
-      scene.add(foxMesh);
+
+      const dark = isDarkMode();
+      let foxMesh = null, tronBike = null, tronTrail = null;
+
+      if (dark) {
+          tronBike = createTronBike(targetSector);
+          tronBike.position.set(startPos.x, 0.065, startPos.z);
+          tronBike.scale.setScalar(0.01);
+          scene.add(tronBike);
+          tronTrail = createTronTrail(tronBike.userData.neonColor);
+      } else {
+          foxMesh = createPolygonalFox();
+          foxMesh.position.copy(startPos);
+          foxMesh.scale.setScalar(0.01);
+          scene.add(foxMesh);
+      }
 
       const transmutation = {
           oppObj: oppObj,
@@ -1763,6 +1909,9 @@
           startPos: startPos,
           endPos: endPos,
           foxMesh: foxMesh,
+          tronBike: tronBike,
+          tronTrail: tronTrail,
+          mode: dark ? 'tron' : 'fox',
           progress: 0.0,
           phase: 'morph_in',
           timeElapsed: 0,
@@ -1776,80 +1925,108 @@
       activeTransmutations.push(transmutation);
   }
 
+  function _finalizeTransmutation(tr, i) {
+      const finalMesh = createBlockyDeputy(tr.targetSector, true);
+      finalMesh.position.copy(tr.targetSlot.position);
+      finalMesh.rotation.y = tr.targetSlot.angle;
+      scene.add(finalMesh);
+      const opp = tr.oppObj;
+      opp.mesh = finalMesh;
+      opp.slot = tr.targetSlot;
+      opp.currentSector = tr.targetSector;
+      opp.breathOffset = Math.random() * Math.PI * 2;
+      activeTransmutations.splice(i, 1);
+  }
+
   function updateTransmutations(delta) {
       for (let i = activeTransmutations.length - 1; i >= 0; i--) {
           const tr = activeTransmutations[i];
           tr.timeElapsed += delta;
 
-          if (tr.phase === 'morph_in') {
-              const s = tr.timeElapsed / 0.18; // 180ms
-              if (s >= 1.0) {
-                  tr.foxMesh.scale.setScalar(1.0);
-                  tr.phase = 'run';
-                  tr.timeElapsed = 0;
-              } else {
-                  tr.foxMesh.scale.setScalar(s);
+          if (tr.mode === 'tron') {
+              // ── TRON BIKE ──────────────────────────────────────────
+              if (tr.phase === 'morph_in') {
+                  const s = Math.min(tr.timeElapsed / 0.22, 1.0);
+                  tr.tronBike.scale.setScalar(s);
+                  if (s >= 1.0) { tr.phase = 'run'; tr.timeElapsed = 0; }
               }
-          } 
-          else if (tr.phase === 'run') {
-              const duration = 2.4;
-              tr.progress = tr.timeElapsed / duration;
-
-              if (tr.progress >= 1.0) {
-                  tr.foxMesh.position.copy(tr.endPos);
-                  tr.phase = 'morph_out';
-                  tr.timeElapsed = 0;
-              } else {
-                  const currentPos = getBezierPoint(tr.startPos, tr.endPos, tr.jumpHeight, tr.progress);
-                  tr.foxMesh.position.copy(currentPos);
-
-                  const nextPos = getBezierPoint(tr.startPos, tr.endPos, tr.jumpHeight, Math.min(tr.progress + 0.02, 1.0));
-                  const direction = new THREE.Vector3().subVectors(nextPos, currentPos).normalize();
-                  if (direction.lengthSq() > 0.0001) {
-                      const angle = Math.atan2(direction.x, direction.z);
-                      tr.foxMesh.rotation.y = angle - Math.PI / 2;
+              else if (tr.phase === 'run') {
+                  const duration = 2.2;
+                  tr.progress = Math.min(tr.timeElapsed / duration, 1.0);
+                  const x = tr.startPos.x + (tr.endPos.x - tr.startPos.x) * tr.progress;
+                  const z = tr.startPos.z + (tr.endPos.z - tr.startPos.z) * tr.progress;
+                  tr.tronBike.position.set(x, 0.065, z);
+                  // Orient along travel direction
+                  const dx = tr.endPos.x - tr.startPos.x;
+                  const dz = tr.endPos.z - tr.startPos.z;
+                  const tronDir = new THREE.Vector3(dx, 0, dz).normalize();
+                  tr.tronBike.rotation.y = Math.atan2(dx, dz);
+                  updateTronTrail(tr.tronTrail, tr.tronBike.position, tronDir);
+                  if (tr.progress >= 1.0) { tr.phase = 'morph_out'; tr.timeElapsed = 0; }
+              }
+              else if (tr.phase === 'morph_out') {
+                  const s = Math.max(1.0 - tr.timeElapsed / 0.22, 0.0);
+                  tr.tronBike.scale.setScalar(s);
+                  // Drain trail
+                  if (tr.tronTrail.points.length > 0) {
+                      tr.tronTrail.points.pop();
+                      updateTronTrail(tr.tronTrail, tr.tronBike.position);
                   }
-
-                  const runCycle = tr.timeElapsed * 15;
-                  tr.foxMesh.position.y += Math.abs(Math.sin(runCycle)) * 0.12;
-                  tr.foxMesh.rotation.x = Math.sin(runCycle) * 0.06;
-
-                  const legs = tr.foxMesh.userData.legs;
-                  if (legs) {
-                      legs[0].rotation.z = Math.sin(runCycle) * 0.55;
-                      legs[1].rotation.z = -Math.sin(runCycle) * 0.55;
-                      legs[2].rotation.z = -Math.sin(runCycle) * 0.55;
-                      legs[3].rotation.z = Math.sin(runCycle) * 0.55;
-                  }
-
-                  const tail = tr.foxMesh.userData.tail;
-                  if (tail) {
-                      tail.forEach((seg, idx) => {
-                          seg.rotation.y = Math.sin(runCycle + idx) * 0.22;
-                      });
+                  if (s <= 0.0) {
+                      scene.remove(tr.tronBike);
+                      disposeGroup(tr.tronBike);
+                      disposeTronTrail(tr.tronTrail);
+                      _finalizeTransmutation(tr, i);
                   }
               }
-          } 
-          else if (tr.phase === 'morph_out') {
-              const s = 1.0 - (tr.timeElapsed / 0.18);
-              if (s <= 0.0) {
-                  scene.remove(tr.foxMesh);
-                  disposeGroup(tr.foxMesh);
-
-                  const finalMesh = createBlockyDeputy(tr.targetSector, true);
-                  finalMesh.position.copy(tr.targetSlot.position);
-                  finalMesh.rotation.y = tr.targetSlot.angle;
-                  scene.add(finalMesh);
-
-                  const opp = tr.oppObj;
-                  opp.mesh = finalMesh;
-                  opp.slot = tr.targetSlot;
-                  opp.currentSector = tr.targetSector;
-                  opp.breathOffset = Math.random() * Math.PI * 2;
-
-                  activeTransmutations.splice(i, 1);
-              } else {
-                  tr.foxMesh.scale.setScalar(s);
+          } else {
+              // ── FOX RUN ────────────────────────────────────────────
+              if (tr.phase === 'morph_in') {
+                  const s = tr.timeElapsed / 0.18;
+                  if (s >= 1.0) {
+                      tr.foxMesh.scale.setScalar(1.0);
+                      tr.phase = 'run'; tr.timeElapsed = 0;
+                  } else {
+                      tr.foxMesh.scale.setScalar(s);
+                  }
+              }
+              else if (tr.phase === 'run') {
+                  const duration = 2.4;
+                  tr.progress = tr.timeElapsed / duration;
+                  if (tr.progress >= 1.0) {
+                      tr.foxMesh.position.copy(tr.endPos);
+                      tr.phase = 'morph_out'; tr.timeElapsed = 0;
+                  } else {
+                      const currentPos = getBezierPoint(tr.startPos, tr.endPos, tr.jumpHeight, tr.progress);
+                      tr.foxMesh.position.copy(currentPos);
+                      const nextPos = getBezierPoint(tr.startPos, tr.endPos, tr.jumpHeight, Math.min(tr.progress + 0.02, 1.0));
+                      const direction = new THREE.Vector3().subVectors(nextPos, currentPos).normalize();
+                      if (direction.lengthSq() > 0.0001) {
+                          tr.foxMesh.rotation.y = Math.atan2(direction.x, direction.z) - Math.PI / 2;
+                      }
+                      const runCycle = tr.timeElapsed * 15;
+                      tr.foxMesh.position.y += Math.abs(Math.sin(runCycle)) * 0.12;
+                      tr.foxMesh.rotation.x = Math.sin(runCycle) * 0.06;
+                      const legs = tr.foxMesh.userData.legs;
+                      if (legs) {
+                          legs[0].rotation.z =  Math.sin(runCycle) * 0.55;
+                          legs[1].rotation.z = -Math.sin(runCycle) * 0.55;
+                          legs[2].rotation.z = -Math.sin(runCycle) * 0.55;
+                          legs[3].rotation.z =  Math.sin(runCycle) * 0.55;
+                      }
+                      const tail = tr.foxMesh.userData.tail;
+                      if (tail) tail.forEach((seg, idx) => { seg.rotation.y = Math.sin(runCycle + idx) * 0.22; });
+                  }
+              }
+              else if (tr.phase === 'morph_out') {
+                  const s = 1.0 - (tr.timeElapsed / 0.18);
+                  if (s <= 0.0) {
+                      scene.remove(tr.foxMesh);
+                      disposeGroup(tr.foxMesh);
+                      _finalizeTransmutation(tr, i);
+                  } else {
+                      tr.foxMesh.scale.setScalar(s);
+                  }
               }
           }
       }
