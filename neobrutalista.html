@@ -575,8 +575,114 @@
     [data-theme="dark"] .lat-am-item em { color: #FAFAF2 !important; }
 
     /* ============================================================
-       DIAPOSITIVA 4 — PREGUNTAS
+       DIAPOSITIVA 4 — PREGUNTAS (RESPONSIVE SPLIT CON THREE.JS)
     ============================================================ */
+    .s-questions .slide-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--sp-6);
+      width: 100%;
+    }
+    @media (min-width: 992px) {
+      .s-questions .slide-content {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: var(--sp-8);
+        align-items: center;
+      }
+    }
+    .s-questions-left {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    .s-questions-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+    .gavel-card {
+      width: 100%;
+      max-width: 480px;
+      height: 380px;
+      background: var(--bg);
+      border: var(--bw) solid var(--border);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .gavel-card-header {
+      background: var(--accent);
+      color: #0a0a0a;
+      border-bottom: var(--bw) solid var(--border);
+      padding: var(--sp-2) var(--sp-4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--f-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      user-select: none;
+      z-index: 10;
+    }
+    .gavel-canvas-container {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: var(--bg);
+      cursor: grab;
+    }
+    .gavel-canvas-container:active {
+      cursor: grabbing;
+    }
+    
+    @keyframes gavel-badge-pop {
+      0% {
+        transform: translate(-50%, -30%) scale(0.3) rotate(-8deg);
+        opacity: 0;
+      }
+      15% {
+        transform: translate(-50%, -50%) scale(1.15) rotate(5deg);
+        opacity: 1;
+      }
+      30% {
+        transform: translate(-50%, -52%) scale(1.0) rotate(3deg);
+        opacity: 1;
+      }
+      80% {
+        transform: translate(-50%, -70%) scale(1.0) rotate(3deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -90%) scale(0.8) rotate(0deg);
+        opacity: 0;
+      }
+    }
+    .gavel-badge {
+      position: absolute;
+      left: 50%;
+      top: 35%;
+      transform: translate(-50%, -50%);
+      background: #ff0055;
+      color: #ffffff;
+      border: 3px solid #000000;
+      box-shadow: 4px 4px 0px #000000;
+      font-family: var(--f-display);
+      font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+      padding: 6px 16px;
+      z-index: 20;
+      pointer-events: none;
+      white-space: nowrap;
+      animation: gavel-badge-pop 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
     .q-stack { display: flex; flex-direction: column; gap: var(--sp-4); max-width: 82ch; }
     .q-item {
       display: grid;
@@ -1055,19 +1161,30 @@
   <!-- ── DIAPOSITIVA 4 ── PREGUNTAS ────────────────────────── -->
   <section class="slide s-questions" id="slide-4" data-section="Preguntas de investigación" data-index="4">
     <div class="slide-content">
-      <div class="tag" style="margin-bottom:var(--sp-6)">Preguntas de investigación</div>
-      <div class="q-stack stagger">
-        <div class="q-item">
-          <div class="q-num">01</div>
-          <div class="q-text">¿Cómo actúan los legisladores para erosionar o proteger la democracia?</div>
+      <div class="s-questions-left">
+        <div class="tag" style="margin-bottom:var(--sp-6)">Preguntas de investigación</div>
+        <div class="q-stack stagger">
+          <div class="q-item">
+            <div class="q-num">01</div>
+            <div class="q-text">¿Cómo actúan los legisladores para erosionar o proteger la democracia?</div>
+          </div>
+          <div class="q-item">
+            <div class="q-num">02</div>
+            <div class="q-text">¿Qué estrategias adoptan los funcionarios electos para erosionar o resistir la erosión democrática?</div>
+          </div>
+          <div class="q-item featured">
+            <div class="q-num">03</div>
+            <div class="q-text">¿Cómo se relacionan estas estrategias con el contexto político más amplio?</div>
+          </div>
         </div>
-        <div class="q-item">
-          <div class="q-num">02</div>
-          <div class="q-text">¿Qué estrategias adoptan los funcionarios electos para erosionar o resistir la erosión democrática?</div>
-        </div>
-        <div class="q-item featured">
-          <div class="q-num">03</div>
-          <div class="q-text">¿Cómo se relacionan estas estrategias con el contexto político más amplio?</div>
+      </div>
+      <div class="s-questions-right">
+        <div class="gavel-card nb-card">
+          <div class="gavel-card-header">
+            <span>SESIÓN EXTRAORDINARIA // LEGISLATURA</span>
+            <button id="gavel-strike-btn" class="interactive theme-toggle" style="position:static; padding:2px 8px; font-size:0.68rem; box-shadow:2px 2px 0 #000; border-radius:0; border:2px solid #000;">GOLPEAR 🔨</button>
+          </div>
+          <div id="gavel-canvas-container" class="gavel-canvas-container interactive"></div>
         </div>
       </div>
     </div>
@@ -2463,6 +2580,738 @@
       es => es[0].isIntersecting ? play() : pause(),
       { threshold: 0.3 }
   ).observe(slide);
+
+})();
+</script>
+
+<script>
+/* ================================================================
+   Three.js — Bukele Minecraft Gavel Animation (Diapositiva 4)
+================================================================ */
+(function waitForThreeSlide4() {
+  if (typeof THREE === 'undefined' || typeof THREE.OrbitControls === 'undefined') {
+    setTimeout(waitForThreeSlide4, 30);
+    return;
+  }
+
+  const container = document.getElementById('gavel-canvas-container');
+  const slide = document.getElementById('slide-4');
+  const strikeBtn = document.getElementById('gavel-strike-btn');
+  if (!container || !slide) return;
+
+  // --- 1. SETUP DE ESCENA 3D ---
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xFFFEF5);
+
+  const camera = new THREE.PerspectiveCamera(38, container.offsetWidth / container.offsetHeight, 0.1, 100);
+  camera.position.set(-1.8, 1.7, 2.9);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(container.offsetWidth, container.offsetHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.maxPolarAngle = Math.PI / 2 - 0.1;
+  controls.minDistance = 1.5;
+  controls.maxDistance = 6;
+  controls.target.set(0.1, 0.45, 0);
+
+  // --- 2. ILUMINACIÓN ---
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+  scene.add(ambientLight);
+
+  const spotLight = new THREE.DirectionalLight(0xffffff, 0.65);
+  spotLight.position.set(1.5, 4, 2);
+  spotLight.castShadow = true;
+  spotLight.shadow.mapSize.width = 1024;
+  spotLight.shadow.mapSize.height = 1024;
+  spotLight.shadow.bias = -0.0005;
+  scene.add(spotLight);
+
+  // --- 3. SHADOW PLANE ---
+  const planeGeo = new THREE.PlaneGeometry(20, 20);
+  const planeMat = new THREE.ShadowMaterial({ opacity: 0.12 });
+  const shadowPlane = new THREE.Mesh(planeGeo, planeMat);
+  shadowPlane.rotation.x = -Math.PI / 2;
+  shadowPlane.position.y = 0;
+  shadowPlane.receiveShadow = true;
+  scene.add(shadowPlane);
+
+  // --- 4. MODELADO PROCEDURAL ---
+  function createOutlinedBox(w, h, d, colorHex, emissiveHex = 0x000000, emissiveInt = 0) {
+      const group = new THREE.Group();
+      const geom = new THREE.BoxGeometry(w, h, d);
+      const mat = new THREE.MeshStandardMaterial({
+          color: colorHex,
+          emissive: emissiveHex,
+          emissiveIntensity: emissiveInt,
+          roughness: 0.6,
+          metalness: 0.15,
+          flatShading: true
+      });
+      const mesh = new THREE.Mesh(geom, mat);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      group.add(mesh);
+
+      const edges = new THREE.EdgesGeometry(geom);
+      const lineMat = new THREE.LineBasicMaterial({ color: 0x000000 });
+      const lines = new THREE.LineSegments(edges, lineMat);
+      group.add(lines);
+
+      return { group, mesh };
+  }
+
+  // --- 5. PARLAMENTO MESA Y ACCESORIOS (ESTILO SALÓN AZUL) ---
+  const tableGroup = new THREE.Group();
+  scene.add(tableGroup);
+
+  // Mesa principal (Mahogany Oscuro / Dark Mahogany)
+  const tableBody = createOutlinedBox(1.35, 0.72, 0.65, 0x3c1b06);
+  tableBody.group.position.y = 0.36;
+  tableGroup.add(tableBody.group);
+
+  // Encimera mesa (madera aún más oscura)
+  const tableTop = createOutlinedBox(1.41, 0.04, 0.71, 0x1f0c01);
+  tableTop.group.position.y = 0.74;
+  tableGroup.add(tableTop.group);
+
+  // Tira de Vidrio Azul Brillante / Trim de Neon Azul (Salón Azul)
+  const blueBand = createOutlinedBox(1.37, 0.06, 0.67, 0x0088ff, 0x0088ff, 1.2);
+  blueBand.group.position.set(0, 0.42, 0.005);
+  tableGroup.add(blueBand.group);
+
+  // Escudo Redondo Dorado Nacional de El Salvador (Panel Frontal)
+  const shieldGroup = new THREE.Group();
+  shieldGroup.position.set(0, 0.36, 0.33); // Panel central frontal
+  
+  const shieldOuter = createOutlinedBox(0.24, 0.24, 0.03, 0xd4af37, 0xd4af37, 0.45); // Aro de oro
+  const shieldInner = createOutlinedBox(0.14, 0.14, 0.035, 0x004b87); // Centro azul
+  const shieldCenter = createOutlinedBox(0.06, 0.06, 0.04, 0x00ff88, 0x00ff88, 0.5); // Triángulo brillante
+  
+  shieldGroup.add(shieldOuter.group);
+  shieldGroup.add(shieldInner.group);
+  shieldGroup.add(shieldCenter.group);
+  tableGroup.add(shieldGroup);
+
+  // Letrero de Mesa / Nameplate Presidencial (Letrero verde y amarillo)
+  const nameplate = createOutlinedBox(0.25, 0.045, 0.06, 0x0f3e1a); // Plato verde
+  nameplate.group.position.set(0, 0.782, 0.28);
+  const nameplateText = createOutlinedBox(0.18, 0.015, 0.065, 0x7fff00, 0x7fff00, 1.0); // Núcleo amarillo/verde neon
+  nameplateText.group.position.set(0, 0.785, 0.28);
+  tableGroup.add(nameplate.group);
+  tableGroup.add(nameplateText.group);
+
+  // Yunque del mazo (Placa circular en blocky)
+  const anvil = createOutlinedBox(0.20, 0.03, 0.20, 0x1a0a00);
+  anvil.group.position.set(0.30, 0.775, 0.14);
+  tableGroup.add(anvil.group);
+
+  // Micrófono parlamentario
+  const micStand = createOutlinedBox(0.012, 0.22, 0.012, 0x111111);
+  micStand.group.position.set(-0.12, 0.86, 0.10);
+  micStand.group.rotation.z = -0.25;
+  micStand.group.rotation.x = 0.1;
+  tableGroup.add(micStand.group);
+
+  const micHead = createOutlinedBox(0.03, 0.03, 0.03, 0xbbbbbb);
+  micHead.group.position.set(-0.10, 0.98, 0.09);
+  tableGroup.add(micHead.group);
+
+  // Papeles parlamentarios
+  const paper1 = createOutlinedBox(0.20, 0.003, 0.28, 0xffffff);
+  paper1.group.position.set(-0.24, 0.762, 0.08);
+  paper1.group.rotation.y = 0.25;
+  tableGroup.add(paper1.group);
+
+  const paper2 = createOutlinedBox(0.18, 0.003, 0.26, 0xf6f6f6);
+  paper2.group.position.set(-0.21, 0.765, 0.10);
+  paper2.group.rotation.y = -0.15;
+  tableGroup.add(paper2.group);
+
+  // --- 6. MODELADO DE NAYIB BUKELE ---
+  const bukeleGroup = new THREE.Group();
+  bukeleGroup.position.set(0.04, 0.44, -0.32); // Subido y desplazado para lucir imponente
+  bukeleGroup.scale.setScalar(1.42); // Escalado 1.42x para aumentar su presencia magnífica frente a la mesa
+  scene.add(bukeleGroup);
+
+  // Torso (Traje gris carbón)
+  const suitColor = 0x1e1e24;
+  const torso = createOutlinedBox(0.34, 0.44, 0.20, suitColor);
+  torso.group.position.y = 0.22;
+  bukeleGroup.add(torso.group);
+
+  // Banda Presidencial (Diagonal Azul y Blanco de El Salvador)
+  const sashGroup = new THREE.Group();
+  sashGroup.position.set(0, 0.26, 0.005);
+  sashGroup.rotation.z = -0.28;
+  
+  const sashBlue = createOutlinedBox(0.37, 0.07, 0.21, 0x004b87);
+  const sashWhite = createOutlinedBox(0.37, 0.024, 0.215, 0xffffff);
+  sashGroup.add(sashBlue.group);
+  sashGroup.add(sashWhite.group);
+  bukeleGroup.add(sashGroup);
+
+  // Cuello de Camisa y Corbata
+  const collarL = createOutlinedBox(0.05, 0.05, 0.015, 0xffffff);
+  collarL.group.position.set(-0.038, 0.42, 0.1);
+  collarL.group.rotation.z = -0.2;
+  const collarR = createOutlinedBox(0.05, 0.05, 0.015, 0xffffff);
+  collarR.group.position.set(0.038, 0.42, 0.1);
+  collarR.group.rotation.z = 0.2;
+  bukeleGroup.add(collarL.group);
+  bukeleGroup.add(collarR.group);
+
+  const tie = createOutlinedBox(0.035, 0.14, 0.01, 0x0052ff); // corbata azul
+  tie.group.position.set(0, 0.36, 0.102);
+  bukeleGroup.add(tie.group);
+
+  // Cabeza
+  const headColor = 0xffdbac; // Piel clara
+  const head = createOutlinedBox(0.24, 0.24, 0.24, headColor);
+  head.group.position.y = 0.54;
+  bukeleGroup.add(head.group);
+
+  // Barba Perfilada (Black beard pieces around jaw and moustache)
+  const beardColor = 0x141414;
+  const jawL = createOutlinedBox(0.018, 0.09, 0.245, beardColor);
+  jawL.group.position.set(-0.115, 0.495, 0.005);
+  const jawR = createOutlinedBox(0.018, 0.09, 0.245, beardColor);
+  jawR.group.position.set(0.115, 0.495, 0.005);
+  bukeleGroup.add(jawL.group);
+  bukeleGroup.add(jawR.group);
+
+  const chinBeard = createOutlinedBox(0.242, 0.04, 0.035, beardColor);
+  chinBeard.group.position.set(0, 0.435, 0.11);
+  bukeleGroup.add(chinBeard.group);
+
+  const moustache = createOutlinedBox(0.15, 0.026, 0.02, beardColor);
+  moustache.group.position.set(0, 0.485, 0.121);
+  bukeleGroup.add(moustache.group);
+
+  // Ojos
+  const eyeL = createOutlinedBox(0.03, 0.03, 0.012, 0x080808);
+  eyeL.group.position.set(-0.048, 0.56, 0.121);
+  const eyeR = createOutlinedBox(0.03, 0.03, 0.012, 0x080808);
+  eyeR.group.position.set(0.048, 0.56, 0.121);
+  bukeleGroup.add(eyeL.group);
+  bukeleGroup.add(eyeR.group);
+
+  // Cabello Slicked-Back
+  const hairColor = 0x111111;
+  const hairTop = createOutlinedBox(0.25, 0.06, 0.25, hairColor);
+  hairTop.group.position.y = 0.67;
+  bukeleGroup.add(hairTop.group);
+
+  const hairBack = createOutlinedBox(0.25, 0.16, 0.04, hairColor);
+  hairBack.group.position.set(0, 0.59, -0.11);
+  bukeleGroup.add(hairBack.group);
+
+  const hairPompadour = createOutlinedBox(0.18, 0.04, 0.08, hairColor);
+  hairPompadour.group.position.set(0, 0.665, 0.095);
+  bukeleGroup.add(hairPompadour.group);
+
+  // Brazo Izquierdo (Apoyado sobre la mesa)
+  const armL = createOutlinedBox(0.076, 0.26, 0.076, suitColor);
+  armL.group.position.set(-0.21, 0.21, 0.07);
+  armL.group.rotation.x = 0.55;
+  armL.group.rotation.z = 0.05;
+  bukeleGroup.add(armL.group);
+
+  const handL = createOutlinedBox(0.076, 0.05, 0.076, headColor);
+  handL.group.position.set(-0.21, 0.11, 0.18);
+  handL.group.rotation.x = 0.45;
+  bukeleGroup.add(handL.group);
+
+  // Brazo Derecho (Pivote para animar el golpeo)
+  const rightShoulderPivot = new THREE.Group();
+  rightShoulderPivot.position.set(0.21, 0.35, 0.02);
+  bukeleGroup.add(rightShoulderPivot);
+
+  // Brazo en sí (dentro del pivote)
+  const armR = createOutlinedBox(0.076, 0.26, 0.076, suitColor);
+  // Desplazado para que pivote desde el hombro
+  armR.group.position.set(0, -0.11, 0.06);
+  armR.group.rotation.x = 0.35;
+  rightShoulderPivot.add(armR.group);
+
+  const handR = createOutlinedBox(0.076, 0.05, 0.076, headColor);
+  handR.group.position.set(0, -0.22, 0.15);
+  handR.group.rotation.x = 0.35;
+  rightShoulderPivot.add(handR.group);
+
+  // El Mazo (Gavel)
+  const gavelGroup = new THREE.Group();
+  // Posicionado en la mano derecha
+  gavelGroup.position.set(0, -0.22, 0.18);
+  gavelGroup.rotation.x = -1.15; // Apunta hacia adelante
+  gavelGroup.rotation.y = 0.1;
+  rightShoulderPivot.add(gavelGroup);
+
+  const gavelHandle = createOutlinedBox(0.022, 0.24, 0.022, 0x5a3418);
+  gavelHandle.group.position.y = 0.1;
+  gavelGroup.add(gavelHandle.group);
+
+  const gavelHead = createOutlinedBox(0.10, 0.065, 0.065, 0x3d1c07);
+  gavelHead.group.position.y = 0.22;
+  gavelGroup.add(gavelHead.group);
+
+  // --- 6.1. PELVIS Y CALZONCILLOS DE LUNARES ROJOS ---
+  const undiesGroup = new THREE.Group();
+  undiesGroup.position.set(0, -0.06, -0.01); // Colocado justo abajo de la chaqueta (y = 0)
+  bukeleGroup.add(undiesGroup);
+
+  // Pelvis / Bóxer base blanco
+  const pelvis = createOutlinedBox(0.32, 0.12, 0.18, 0xffffff);
+  pelvis.group.position.y = 0; // Centrado en undiesGroup
+  undiesGroup.add(pelvis.group);
+
+  // Lunares rojos en la pelvis (Cajitas rojas pequeñas a los lados)
+  const dotsData = [
+      { x: -0.10, y: 0.02, z: 0.092 },
+      { x: 0.08, y: -0.02, z: 0.092 },
+      { x: -0.162, y: 0.0, z: 0 },
+      { x: 0.162, y: 0.02, z: 0.02 },
+      { x: -0.06, y: -0.01, z: -0.092 },
+      { x: 0.08, y: 0.01, z: -0.092 }
+  ];
+  dotsData.forEach(d => {
+      const dot = createOutlinedBox(0.03, 0.03, 0.015, 0xff0000);
+      dot.group.position.set(d.x, d.y, d.z);
+      if (Math.abs(d.x) === 0.162) {
+          dot.group.scale.set(0.5, 1, 2); // alargar lateralmente
+      }
+      undiesGroup.add(dot.group);
+  });
+
+  // --- 6.2. PIERNAS QUE PATALEAN (Bóxer blanco, Lunares, Piel y Zapatitos) ---
+  const legLGroup = new THREE.Group();
+  legLGroup.position.set(-0.08, -0.12, -0.02); // Empieza en la base de los calzoncillos (y = -0.12)
+  bukeleGroup.add(legLGroup);
+
+  // Muslo con calzoncillo blanco
+  const boxerL = createOutlinedBox(0.11, 0.08, 0.11, 0xffffff);
+  boxerL.group.position.y = -0.04;
+  legLGroup.add(boxerL.group);
+
+  // Lunares en la pierna del calzoncillo L
+  const dotL1 = createOutlinedBox(0.025, 0.025, 0.112, 0xff0000);
+  dotL1.group.position.set(-0.045, -0.04, 0);
+  const dotL2 = createOutlinedBox(0.112, 0.025, 0.025, 0xff0000);
+  dotL2.group.position.set(0, -0.05, 0.045);
+  legLGroup.add(dotL1.group);
+  legLGroup.add(dotL2.group);
+
+  // Pierna desnuda (color piel)
+  const bareLegL = createOutlinedBox(0.076, 0.16, 0.076, headColor);
+  bareLegL.group.position.y = -0.16;
+  legLGroup.add(bareLegL.group);
+
+  // Zapato negro L
+  const shoeL = createOutlinedBox(0.084, 0.05, 0.12, 0x111111);
+  shoeL.group.position.set(0, -0.265, 0.02);
+  legLGroup.add(shoeL.group);
+
+  // Pierna Derecha
+  const legRGroup = new THREE.Group();
+  legRGroup.position.set(0.08, -0.12, -0.02); // Empieza en la base de los calzoncillos (y = -0.12)
+  bukeleGroup.add(legRGroup);
+
+  const boxerR = createOutlinedBox(0.11, 0.08, 0.11, 0xffffff);
+  boxerR.group.position.y = -0.04;
+  legRGroup.add(boxerR.group);
+
+  // Lunares en la pierna del calzoncillo R
+  const dotR1 = createOutlinedBox(0.025, 0.025, 0.112, 0xff0000);
+  dotR1.group.position.set(0.045, -0.04, 0);
+  const dotR2 = createOutlinedBox(0.112, 0.025, 0.025, 0xff0000);
+  dotR2.group.position.set(0, -0.05, 0.045);
+  legRGroup.add(dotR1.group);
+  legRGroup.add(dotR2.group);
+
+  const bareLegR = createOutlinedBox(0.076, 0.16, 0.076, headColor);
+  bareLegR.group.position.y = -0.16;
+  legRGroup.add(bareLegR.group);
+
+  // Zapato negro R
+  const shoeR = createOutlinedBox(0.084, 0.05, 0.12, 0x111111);
+  shoeR.group.position.set(0, -0.265, 0.02);
+  legRGroup.add(shoeR.group);
+
+
+  // --- 7. SISTEMA DE PARTÍCULAS DEL GOLPEO (Explosión) ---
+  const particles = [];
+  const particleGeo = new THREE.BoxGeometry(0.03, 0.03, 0.03);
+  const particleMats = [
+      new THREE.MeshStandardMaterial({ color: 0xe6a15c, roughness: 0.8, metalness: 0.1 }), // astillas madera
+      new THREE.MeshStandardMaterial({ color: 0xffd700, roughness: 0.4, metalness: 0.9, emissive: 0xffaa00, emissiveIntensity: 1.0 }), // chispas doradas
+      new THREE.MeshStandardMaterial({ color: 0xff5500, roughness: 0.2, metalness: 0.2, emissive: 0xff2200, emissiveIntensity: 1.5 })  // chispas fuego
+  ];
+
+  function spawnStrikeParticles(x, y, z) {
+      const numParticles = 12 + Math.floor(Math.random() * 8);
+      for (let i = 0; i < numParticles; i++) {
+          const mat = particleMats[Math.floor(Math.random() * particleMats.length)];
+          const mesh = new THREE.Mesh(particleGeo, mat);
+          mesh.castShadow = true;
+          
+          const pGroup = new THREE.Group();
+          pGroup.add(mesh);
+          
+          // Bordes negros sencillos
+          const edges = new THREE.EdgesGeometry(particleGeo);
+          const lines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
+          pGroup.add(lines);
+          
+          pGroup.position.set(
+              x + (Math.random() - 0.5) * 0.08,
+              y + 0.02,
+              z + (Math.random() - 0.5) * 0.08
+          );
+          
+          scene.add(pGroup);
+          
+          particles.push({
+              group: pGroup,
+              mesh: mesh,
+              velocity: new THREE.Vector3(
+                  (Math.random() - 0.5) * 1.8,
+                  Math.random() * 1.5 + 0.8,
+                  (Math.random() - 0.5) * 1.8
+              ),
+              rotSpeed: new THREE.Vector3(
+                  Math.random() * 8,
+                  Math.random() * 8,
+                  Math.random() * 8
+              ),
+              life: 0.6 + Math.random() * 0.3,
+              totalLife: 0.9
+          });
+      }
+  }
+
+  function updateParticles(delta) {
+      for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.life -= delta;
+          if (p.life <= 0) {
+              scene.remove(p.group);
+              p.mesh.geometry.dispose();
+              particles.splice(i, 1);
+          } else {
+              p.group.position.addScaledVector(p.velocity, delta);
+              p.velocity.y -= 7.5 * delta; // Gravedad
+              p.group.rotation.x += p.rotSpeed.x * delta;
+              p.group.rotation.y += p.rotSpeed.y * delta;
+              
+              // Escalar hacia abajo en su tramo final
+              const ratio = p.life / p.totalLife;
+              if (ratio < 0.4) {
+                  p.group.scale.setScalar(ratio * 2.5);
+              }
+          }
+      }
+  }
+
+
+  const badgeTexts = [
+      "¡APROBADO!",
+      "¡SILENCIO!",
+      "¡DECRETADO!",
+      "¡ORDEN EN LA SALA!",
+      "¡VETO PRESIDENCIAL!",
+      "¡ESTADO DE EXCECCIÓN!",
+      "¡SESIÓN CERRADA!",
+      "¡DISPENSA DE TRÁMITES!",
+      "¡PANDILLEROS!",
+      "¡DIPURRATAS!",
+      "¡PUCHABOTONES!"
+  ];
+
+  function triggerPopupBadge() {
+      const text = badgeTexts[Math.floor(Math.random() * badgeTexts.length)];
+      const badge = document.createElement('div');
+      badge.className = 'gavel-badge';
+      badge.textContent = text;
+      
+      // Rotación aleatoria neobrutalista para mayor dinamismo
+      const rot = (Math.random() * 12 - 6).toFixed(1);
+      badge.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+      
+      container.parentElement.appendChild(badge);
+      
+      // Remoción segura después del término de la animación
+      setTimeout(() => {
+          if (badge.parentNode) {
+              badge.parentNode.removeChild(badge);
+          }
+      }, 900);
+  }
+
+
+  // --- 9. MÁQUINA DE ESTADOS DE LA ANIMACIÓN ---
+  let animState = 'idle';
+  let stateTimer = 0;
+  
+  let animProgress = 0;
+  const DURATION_RAISE = 0.28;
+  const DURATION_STRIKE = 0.06;
+  const DURATION_HOLD = 0.16;
+  const DURATION_RECOVER = 0.45;
+  
+  let autoStrikeTimer = 2.0; // Primer golpe rápido al entrar
+  let shakeTime = 0;
+  const SHAKE_INTENSITY = 0.055;
+
+  function setAnimState(newState) {
+      animState = newState;
+      animProgress = 0;
+  }
+
+  function handleGavelAnimation(delta, time) {
+      // 1. Efecto Camera Shake
+      if (shakeTime > 0) {
+          shakeTime -= delta;
+          const shakeFactor = shakeTime / 0.15;
+          const dx = (Math.random() - 0.5) * SHAKE_INTENSITY * shakeFactor;
+          const dy = (Math.random() - 0.5) * SHAKE_INTENSITY * shakeFactor;
+          camera.position.x += dx;
+          camera.position.y += dy;
+      }
+
+      // 2. Transiciones de estados de la figurita
+      switch(animState) {
+          case 'idle':
+              // Respiración y gestos suaves del presidente Bukele
+              const breathing = Math.sin(time * 2.2);
+              head.group.rotation.x = breathing * 0.02;
+              head.group.rotation.y = Math.cos(time * 0.8) * 0.04;
+              
+              // El brazo reposa relajado en su hombro
+              rightShoulderPivot.rotation.x = breathing * 0.015;
+              rightShoulderPivot.rotation.y = 0;
+              rightShoulderPivot.rotation.z = Math.sin(time * 1.1) * 0.01;
+              
+              // Temporizador para auto-golpear
+              autoStrikeTimer -= delta;
+              if (autoStrikeTimer <= 0) {
+                  setAnimState('raising');
+                  autoStrikeTimer = 3.5 + Math.random() * 2.0; // cada 3.5-5.5 segs
+              }
+              break;
+
+          case 'raising':
+              animProgress += delta / DURATION_RAISE;
+              if (animProgress >= 1.0) {
+                  animProgress = 1.0;
+                  setAnimState('striking');
+              }
+              
+              // Levantar brazo y rotar cabeza para mirar hacia arriba/atrás
+              const raiseFactor = THREE.MathUtils.smoothstep(animProgress, 0, 1);
+              rightShoulderPivot.rotation.x = THREE.MathUtils.lerp(0, -1.0, raiseFactor);
+              rightShoulderPivot.rotation.z = THREE.MathUtils.lerp(0, 0.15, raiseFactor);
+              head.group.rotation.x = THREE.MathUtils.lerp(0, -0.08, raiseFactor);
+              break;
+
+          case 'striking':
+              animProgress += delta / DURATION_STRIKE;
+              let isImpact = false;
+              if (animProgress >= 1.0) {
+                  animProgress = 1.0;
+                  isImpact = true;
+              }
+              
+              // Golpe extremadamente rápido hacia el escritorio
+              const strikeFactor = animProgress; // lineal para sensación de velocidad acelerante
+              rightShoulderPivot.rotation.x = THREE.MathUtils.lerp(-1.0, 0.44, strikeFactor);
+              rightShoulderPivot.rotation.z = THREE.MathUtils.lerp(0.15, -0.05, strikeFactor);
+              head.group.rotation.x = THREE.MathUtils.lerp(-0.08, 0.12, strikeFactor);
+              
+              if (isImpact) {
+                  // ¡IMPACTO! Gatillar efectos de feedback físico
+                  shakeTime = 0.15; // Sacudir cámara
+                  spawnStrikeParticles(0.30, 0.78, 0.14); // Chispas en el yunque
+                  triggerPopupBadge(); // Popup HTML de ley
+                  setAnimState('hold');
+              }
+              break;
+
+          case 'hold':
+              animProgress += delta / DURATION_HOLD;
+              if (animProgress >= 1.0) {
+                  setAnimState('recovering');
+              }
+              
+              // El mazo presionado contra el yunque, cabeza tiembla levemente de firmeza
+              rightShoulderPivot.rotation.x = 0.44;
+              head.group.rotation.x = 0.12 + Math.sin(time * 30) * 0.01;
+              break;
+
+          case 'recovering':
+              animProgress += delta / DURATION_RECOVER;
+              if (animProgress >= 1.0) {
+                  animProgress = 1.0;
+                  setAnimState('idle');
+              }
+              
+              // Volver lentamente a la posición de reposo
+              const recoverFactor = THREE.MathUtils.smoothstep(animProgress, 0, 1);
+              rightShoulderPivot.rotation.x = THREE.MathUtils.lerp(0.44, 0, recoverFactor);
+              rightShoulderPivot.rotation.z = THREE.MathUtils.lerp(-0.05, 0, recoverFactor);
+              head.group.rotation.x = THREE.MathUtils.lerp(0.12, 0, recoverFactor);
+              break;
+      }
+
+      // 3. Animación de calzoncillos / pataleo y saltitos según el estado de la animación
+      if (animState === 'striking' || animState === 'hold') {
+          // ¡Pataleo rápido y cómico en el aire!
+          legLGroup.rotation.x = Math.sin(time * 36) * 0.45;
+          legRGroup.rotation.x = -Math.sin(time * 36) * 0.45;
+          legLGroup.rotation.z = Math.cos(time * 20) * 0.08;
+          legRGroup.rotation.z = -Math.cos(time * 20) * 0.08;
+          
+          // Saltito elástico al golpear
+          const jumpHeight = (animState === 'striking') 
+              ? Math.sin(animProgress * Math.PI) * 0.09 
+              : Math.sin(animProgress * Math.PI) * 0.04;
+          bukeleGroup.position.y = 0.44 + jumpHeight;
+      } else if (animState === 'raising') {
+          // Alza las piernas preparándose para golpear
+          legLGroup.rotation.x = -0.22;
+          legRGroup.rotation.x = -0.22;
+          legLGroup.rotation.z = 0.05;
+          legRGroup.rotation.z = -0.05;
+          
+          bukeleGroup.position.y = 0.44;
+      } else if (animState === 'recovering') {
+          // Vuelven las piernas a su sitio
+          const recoverFactor = THREE.MathUtils.smoothstep(animProgress, 0, 1);
+          legLGroup.rotation.x = THREE.MathUtils.lerp(-0.22, 0, recoverFactor);
+          legRGroup.rotation.x = THREE.MathUtils.lerp(-0.22, 0, recoverFactor);
+          legLGroup.rotation.z = THREE.MathUtils.lerp(0.05, 0, recoverFactor);
+          legRGroup.rotation.z = THREE.MathUtils.lerp(-0.05, 0, recoverFactor);
+          
+          bukeleGroup.position.y = 0.44;
+      } else {
+          // Idle normal sentado
+          legLGroup.rotation.x = 0;
+          legRGroup.rotation.x = 0;
+          legLGroup.rotation.z = 0;
+          legRGroup.rotation.z = 0;
+          
+          bukeleGroup.position.y = 0.44;
+      }
+  }
+
+
+  // --- 10. BOTÓN DE GOLPE MANUAL INTERACTIVO ---
+  strikeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Si está en reposo o recuperándose, forzar alzada
+      if (animState === 'idle' || animState === 'recovering' || animState === 'hold') {
+          setAnimState('raising');
+          // Resetear temporizador de golpe automático
+          autoStrikeTimer = 4.5 + Math.random() * 2.0;
+      }
+  });
+
+
+  // --- 11. INTEGRACIÓN CON MODO OSCURO DE LA SLIDE ---
+  function applyThemeSlide4() {
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (dark) {
+          scene.background.setHex(0x111110);
+          ambientLight.intensity = 0.45;
+          spotLight.intensity = 0.95;
+          spotLight.color.setHex(0xffffff);
+      } else {
+          scene.background.setHex(0xFFFEF5);
+          ambientLight.intensity = 0.85;
+          spotLight.intensity = 0.65;
+          spotLight.color.setHex(0xffffff);
+      }
+  }
+  
+  applyThemeSlide4();
+  new MutationObserver(applyThemeSlide4)
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+
+  // --- 12. BUCLE TICK & RENDERIZADO CON POWER SAVING ---
+  const clock = new THREE.Clock();
+  let isPlaying = false;
+  let rafId = null;
+
+  function tick() {
+      if (!isPlaying) return;
+      
+      const delta = clock.getDelta();
+      const time = clock.getElapsedTime();
+      
+      // Limitar delta para evitar saltos enormes por pérdida de foco/tab inactivo
+      const cappedDelta = Math.min(delta, 0.1);
+      
+      // Actualizar OrbitControls
+      controls.update();
+      
+      // Salvar la posición real antes de la sacudida para no derivar la cámara
+      const originalCamPos = camera.position.clone();
+      
+      // Ejecutar lógica de animación (que puede alterar la cámara por el shake)
+      handleGavelAnimation(cappedDelta, time);
+      
+      // Actualizar y decaer partículas físicas
+      updateParticles(cappedDelta);
+      
+      // Renderizar escena
+      renderer.render(scene, camera);
+      
+      // Restaurar la posición original de la cámara (libre de sacudida) para OrbitControls
+      camera.position.copy(originalCamPos);
+      
+      rafId = requestAnimationFrame(tick);
+  }
+
+  function play() {
+      if (isPlaying) return;
+      isPlaying = true;
+      clock.getDelta(); // flush accumulator
+      rafId = requestAnimationFrame(tick);
+  }
+
+  function pause() {
+      isPlaying = false;
+      if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+      }
+  }
+
+  // Window resize handler
+  function onResize() {
+      if (!container) return;
+      const W = container.offsetWidth;
+      const H = container.offsetHeight;
+      camera.aspect = W / H;
+      camera.updateProjectionMatrix();
+      renderer.setSize(W, H);
+  }
+  window.addEventListener('resize', onResize);
+
+  // Intersection Observer para parar la renderización si está fuera de pantalla
+  new IntersectionObserver(
+      entries => entries[0].isIntersecting ? play() : pause(),
+      { threshold: 0.15 }
+  ).observe(slide);
+
+  // Ajustar tamaño inicial al montarse
+  setTimeout(onResize, 100);
 
 })();
 </script>
