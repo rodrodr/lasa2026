@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guardianes, Oportunistas y Adeptos — LASA 2026 [NEOBRUTALISTA]</title>
 
-  <!-- Archivo Black (headings) · Archivo (body) -->
+  <!-- Archivo Black (headings) · Archivo (body) · Outfit + Inter (portada matching index.html) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@800;900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
     /* ============================================================
@@ -288,104 +288,173 @@
     [data-theme="dark"] .tgl-light { display: none; }
 
     /* ============================================================
-       DIAPOSITIVA 1 — PORTADA
+       DIAPOSITIVA 1 — PORTADA (estilo index.html)
     ============================================================ */
     .s-portada { justify-content: flex-start; gap: 0; }
+
+    /* Override slide-content for portada: viewport-relative padding like index.html */
+    .s-portada .slide-content {
+      padding: 3vh 3.5vw calc(var(--footer-h) + 10vh);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
 
     .portada-topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: var(--sp-8);
-      padding-bottom: var(--sp-6);
+      width: 100%;
+      padding-bottom: 1.5vh;
       border-bottom: var(--bw) solid var(--border);
+      transition: border-color 0.4s ease;
     }
     .portada-badge {
-      font-family: var(--f-display);
-      font-size: clamp(0.8rem, 1.1vw, 1rem);
-      letter-spacing: 0.05em;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
       background: var(--text);
       color: var(--bg);
-      padding: var(--sp-1) var(--sp-4);
+      padding: 6px 18px;
+      border: var(--bw) solid var(--border);
+      box-shadow: var(--shadow);
+      text-transform: uppercase;
+      transition: all 0.4s ease;
     }
     .portada-conf {
-      font-family: var(--f-body);
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      color: var(--mute);
+      opacity: 0.8;
     }
 
-    .portada-main { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: var(--sp-6); }
+    .portada-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding-left: 2vw;
+      margin-top: -3vh;
+    }
 
     .portada-title {
-      font-family: var(--f-display);
-      font-size: clamp(4rem, 10vw, 10.5rem);
-      line-height: 0.93;
-      letter-spacing: -0.02em;
+      font-family: 'Outfit', 'Syne', sans-serif;
+      font-weight: 900;
+      font-size: 8.2vw;
+      line-height: 0.85;
+      letter-spacing: -3px;
+      text-align: left;
+      margin-bottom: 3.5vh;
+      transition: color 0.4s ease;
     }
     .portada-title .hi {
       background: var(--accent);
-      display: inline;
-      box-decoration-break: clone;
-      -webkit-box-decoration-break: clone;
-      padding: 0 6px;
+      color: #000000;
+      padding: 2px 30px 10px 15px;
+      border: var(--bw) solid #0a0a0a;
+      display: inline-block;
+      box-shadow: var(--shadow-lg);
+      transition: background-color 0.4s ease;
     }
 
     .portada-tags {
       display: flex;
-      gap: var(--sp-3);
-      flex-wrap: wrap;
+      gap: 0.8vw;
+      margin-top: 1.5vh;
     }
     .ptag {
-      font-family: var(--f-body);
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       border: var(--bw) solid var(--border);
       box-shadow: var(--shadow-sm);
-      padding: var(--sp-1) var(--sp-4);
+      padding: 4px 14px;
       background: var(--bg);
+      transition: all 0.2s ease;
+    }
+    .ptag:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow);
     }
 
     .portada-bottom {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-      gap: var(--sp-8);
-      padding-top: var(--sp-6);
+      width: 100%;
+      padding-top: 1.8vh;
       border-top: var(--bw) solid var(--border);
-      margin-top: var(--sp-4);
+      margin-top: 1vh;
+      transition: border-color 0.4s ease;
     }
     .portada-sub {
-      font-family: var(--f-body);
-      font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 1.35rem;
       font-style: italic;
-      line-height: 1.5;
-      color: var(--mute);
-      max-width: 45ch;
+      line-height: 1.25;
+      opacity: 0.85;
+      color: var(--text);
+      max-width: 40vw;
+      transition: color 0.4s ease;
     }
     .portada-author-box {
       flex-shrink: 0;
-      padding: var(--sp-4) var(--sp-6);
+      background: #ffffff;
+      color: #000000;
+      border: var(--bw) solid #0a0a0a;
+      padding: 16px 28px;
+      box-shadow: var(--shadow-lg);
+      text-align: left;
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      align-items: flex-end;
+      gap: 4px;
+      margin-bottom: 0.5vh;
+      transition: transform 0.12s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+    [data-theme="dark"] .portada-author-box {
+      background: var(--surface);
+      color: var(--text);
+    }
+    .portada-author-box:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0px #0a0a0a;
+    }
+    [data-theme="dark"] .portada-author-box:hover {
+      box-shadow: 8px 8px 0px var(--accent);
     }
     .portada-name {
-      font-family: var(--f-display);
-      font-size: clamp(0.95rem, 1.3vw, 1.2rem);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      margin-bottom: 4px;
     }
     .portada-inst {
-      font-family: var(--f-body);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
       font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
+      color: #666666;
+    }
+    [data-theme="dark"] .portada-inst {
       color: var(--mute);
+    }
+    .interactive {
+      pointer-events: auto !important;
+    }
+    #parallax-title, #parallax-subtitle, #parallax-author {
+      transition: transform 0.12s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
     }
 
     /* ============================================================
@@ -781,6 +850,9 @@
        Cada slide lleva su propio acento; la franja lateral lo señala
     ============================================================ */
 
+    /* Portada canvas stays below content */
+    .s-portada .slide-content { position: relative; z-index: 1; }
+
     /* Franja lateral de color — firma visual */
     .slide::before {
       content: '';
@@ -873,40 +945,56 @@
     .nb-card-mint .assum-ordinal { color: #002211; opacity: 0.65; }
     .nb-card-mint .assum-title   { color: #001a0d; }
     .nb-card-mint .assum-body    { color: #001a0d; opacity: 0.8; }
-
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
 
 <div class="deck" id="deck">
 
-  <!-- ── DIAPOSITIVA 1 ── PORTADA ──────────────────────────── -->
-  <section class="slide s-portada" id="slide-1" data-section="Introducción" data-index="1">
-    <div class="slide-content">
-      <div class="portada-topbar">
-        <span class="portada-badge">LASA 2026 — París</span>
-        <span class="portada-conf">Erosión democrática · Legislaturas comparadas</span>
-      </div>
+  <section class="slide s-portada" id="slide-1" data-section="Introducción" data-index="1" style="position:relative; overflow:hidden; padding:0;">
+    <!-- 3D Diorama Arena in the background -->
+    <div id="canvas-container" style="position:absolute;left:43%;right:0;top:6%;bottom:0;z-index:0;"></div>
+    
+    <div class="slide-content" style="position:relative; z-index:1; pointer-events:none;">
+      <!-- HEADER -->
+      <header class="portada-topbar interactive">
+        <div style="display:flex;align-items:center;gap:1.5vw;">
+          <span class="portada-badge">LASA 2026 — París</span>
+          <span class="portada-conf">Erosión Democrática · Legislaturas Comparadas</span>
+        </div>
+      </header>
 
-      <div class="portada-main">
-        <h1 class="portada-title">
-          <span class="hi">Guardianes,</span><br>
-          Oportunistas<br>y Adeptos
-        </h1>
-        <div class="portada-tags">
+      <!-- HERO BODY -->
+      <main id="parallax-title" class="portada-main">
+        <div>
+          <h1 class="portada-title interactive">
+            <span class="hi">Guardianes,</span><br>
+            Oportunistas<br>
+            y Adeptos
+          </h1>
+        </div>
+        <div class="portada-tags interactive">
           <span class="ptag">Guardianes</span>
           <span class="ptag">Oportunistas</span>
           <span class="ptag">Adeptos</span>
         </div>
-      </div>
+      </main>
 
-      <div class="portada-bottom">
-        <p class="portada-sub">Dinámicas legislativas en contextos de erosión democrática</p>
-        <div class="portada-author-box nb-card">
-          <span class="portada-name">Rodrigo Rodrigues-Silveira</span>
-          <span class="portada-inst">Universidad de Salamanca</span>
+      <!-- FOOTER -->
+      <footer class="portada-bottom">
+        <div id="parallax-subtitle" style="display:flex;flex-direction:column;gap:1.5vh;max-width:40vw;">
+          <p class="portada-sub">Dinámicas legislativas en contextos de erosión<br>democrática</p>
+          <div class="portada-conf" style="font-size:0.85rem;">Introducción</div>
         </div>
-      </div>
+        <div style="display:flex;align-items:flex-end;gap:2.5vw;">
+          <div id="parallax-author" class="portada-author-box interactive">
+            <span class="portada-name">Rodrigo Rodrigues-Silveira</span>
+            <span class="portada-inst">Universidad de Salamanca</span>
+          </div>
+        </div>
+      </footer>
     </div>
   </section>
 
@@ -1197,6 +1285,1009 @@
     html.setAttribute('data-theme', next);
     localStorage.setItem('lasa-neo-theme', next);
   });
+</script>
+
+<script>
+/* ================================================================
+   Three.js — Hemiciclo de las Metamorfosis 3D (Portada interactiva)
+   Guardianes (azul) · Adeptos (rojo) · Oportunistas (cabeza amarilla)
+================================================================ */
+(function waitForThree() {
+  if (typeof THREE === 'undefined' || typeof THREE.OrbitControls === 'undefined') {
+    setTimeout(waitForThree, 30);
+    return;
+  }
+
+  const container = document.getElementById('canvas-container');
+  const slide  = document.getElementById('slide-1');
+  if (!container || !slide) return;
+
+  // --- 1. SETUP DE ESCENA 3D ---
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xFFFEF5); // Marfil
+
+  const camera = new THREE.PerspectiveCamera(40, container.offsetWidth / container.offsetHeight, 0.1, 100);
+  camera.position.set(0, 8.8, 24); // 20° de elevación
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(container.offsetWidth, container.offsetHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Sombras suaves
+  container.appendChild(renderer.domElement);
+
+  // Orbit controls to inspect the 3D diorama
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.maxPolarAngle = Math.PI / 2 - 0.05;
+  controls.minDistance = 5;
+  controls.maxDistance = 25;
+  controls.target.set(0, 0, 0);
+  
+  // Native OrbitControls automatic rotation
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.6; // beautiful slow rotate
+
+  // --- 2. ILUMINACIÓN (ESTILO MAQUETA CON SOMBRAS MARCADAS) ---
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+  scene.add(ambientLight);
+
+  // High spotlight from above to project sharp shadows on white floor
+  const sunLight = new THREE.DirectionalLight(0xffffff, 0.65);
+  sunLight.position.set(2, 16, 4);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.bias = -0.0003;
+  scene.add(sunLight);
+
+  // Subtle colored glow pointlights near sectors
+  const demLight = new THREE.PointLight(0x0052ff, 1.0, 8);
+  demLight.position.set(-5, 1.2, 0);
+  scene.add(demLight);
+
+  const eroLight = new THREE.PointLight(0xe91d24, 1.0, 8);
+  eroLight.position.set(5, 1.2, 0);
+  scene.add(eroLight);
+
+  const oppLight = new THREE.PointLight(0xffbb00, 0.6, 7);
+  oppLight.position.set(0, 1.2, 2.5);
+  scene.add(oppLight);
+
+  // --- 3. ESCENARIO (EL CONGRESO BLANCO - INVISIBLE SHADOW RECEIVER PLANE) ---
+  const planeGeo = new THREE.PlaneGeometry(100, 100);
+  const planeMat = new THREE.ShadowMaterial({ opacity: 0.15 });
+  const shadowPlane = new THREE.Mesh(planeGeo, planeMat);
+  shadowPlane.rotation.x = -Math.PI / 2;
+  shadowPlane.position.y = 0;
+  shadowPlane.receiveShadow = true;
+  scene.add(shadowPlane);
+
+  // Sector ring boundaries (subtle outlines) - Completely Opaque
+  function createSectorRing(x, z, radius, colorHex) {
+      const ringGeo = new THREE.RingGeometry(radius - 0.1, radius + 0.1, 64);
+      const ringMat = new THREE.MeshBasicMaterial({ 
+          color: colorHex, 
+          side: THREE.DoubleSide
+      });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(x, 0.02, z);
+      scene.add(ring);
+      
+      // Stylized flat podium
+      const podGeo = new THREE.BoxGeometry(0.4, 0.12, 0.4);
+      const podMat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.2 });
+      const pod = new THREE.Mesh(podGeo, podMat);
+      const podEdge = new THREE.LineSegments(new THREE.EdgesGeometry(podGeo), new THREE.LineBasicMaterial({ color: 0x000000 }));
+      pod.position.set(x, 0.06, z);
+      pod.castShadow = true;
+      pod.receiveShadow = true;
+      scene.add(pod);
+
+      podEdge.position.copy(pod.position);
+      scene.add(podEdge);
+  }
+
+  // Sector indicators
+  createSectorRing(-4.5, 0, 2.6, 0x0052cc); // Democrats (US Political Blue)
+  createSectorRing(4.5, 0, 2.6, 0xe91d24); // Eroders (US Political Red)
+
+  // --- 4. MODELADO PROCEDURAL LEGO & FOXES ---
+  function createOutlinedBox(w, h, d, colorHex, emissiveHex = 0x000000, emissiveInt = 0) {
+      const group = new THREE.Group();
+      
+      const geom = new THREE.BoxGeometry(w, h, d);
+      const mat = new THREE.MeshStandardMaterial({
+          color: colorHex,
+          emissive: emissiveHex,
+          emissiveIntensity: emissiveInt,
+          roughness: 0.5,
+          metalness: 0.1,
+          flatShading: true
+      });
+      const mesh = new THREE.Mesh(geom, mat);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      group.add(mesh);
+      
+      const edges = new THREE.EdgesGeometry(geom);
+      const lineMat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 });
+      const lines = new THREE.LineSegments(edges, lineMat);
+      group.add(lines);
+      
+      return { group, mesh };
+  }
+
+  function createBlockyDeputy(faction, isOpportunist = false) {
+      const deputyGroup = new THREE.Group();
+
+      // 1. Torso/Suit Block
+      const suitColors = {
+          democrat: 0x0c2340,    // US presidential navy blue suit
+          eroder: 0x6a0a0d       // Deep political red suit
+      };
+      const suitColor = suitColors[faction];
+      const torso = createOutlinedBox(0.35, 0.44, 0.22, suitColor);
+      torso.group.position.y = 0.22;
+      deputyGroup.add(torso.group);
+
+      // 2. Faction Sash/Band
+      const colorsLookup = {
+          democrat: 0x0052ff,    // US Democratic Blue
+          eroder: 0xe91d24       // US Republican Red
+      };
+      const sashColor = colorsLookup[faction];
+      const sash = createOutlinedBox(0.38, 0.08, 0.24, sashColor, sashColor, 0.4);
+      sash.group.position.set(0, 0.25, 0.01);
+      sash.group.rotation.z = -0.3;
+      deputyGroup.add(sash.group);
+
+      // 3. Head (Yellow head for opportunists, skin color for static ones)
+      let headColor;
+      if (isOpportunist) {
+          headColor = 0xffd000; // Gold/Yellow head block!
+      } else {
+          const skinColors = [0xe7b47b, 0xd29759, 0xfad5a5, 0xc18648];
+          headColor = skinColors[Math.floor(Math.random() * skinColors.length)];
+      }
+      const head = createOutlinedBox(0.24, 0.24, 0.24, headColor);
+      head.group.position.y = 0.56;
+      deputyGroup.add(head.group);
+
+      // 4. Lego Stud / Hair on top
+      const hairColor = isOpportunist ? 0x1a1a1a : [0x1a1a1a, 0x5a3d28, 0xc5a059][Math.floor(Math.random() * 3)];
+      const hair = createOutlinedBox(0.12, 0.06, 0.12, hairColor);
+      hair.group.position.y = 0.69;
+      deputyGroup.add(hair.group);
+
+      // 5. Blocky Eyes
+      const eyeL = createOutlinedBox(0.035, 0.035, 0.02, 0x000000);
+      eyeL.group.position.set(-0.05, 0.58, 0.12);
+      const eyeR = createOutlinedBox(0.035, 0.035, 0.02, 0x000000);
+      eyeR.group.position.set(0.05, 0.58, 0.12);
+      deputyGroup.add(eyeL.group);
+      deputyGroup.add(eyeR.group);
+
+      // 6. Arms
+      const armL = createOutlinedBox(0.08, 0.32, 0.08, suitColor);
+      armL.group.position.set(-0.21, 0.22, 0);
+      const armR = createOutlinedBox(0.08, 0.32, 0.08, suitColor);
+      armR.group.position.set(0.21, 0.22, 0);
+      deputyGroup.add(armL.group);
+      deputyGroup.add(armR.group);
+
+      // 7. Legs
+      const legColor = 0x111111;
+      const legL = createOutlinedBox(0.11, 0.2, 0.11, legColor);
+      legL.group.position.set(-0.07, 0.04, 0);
+      const legR = createOutlinedBox(0.11, 0.2, 0.11, legColor);
+      legR.group.position.set(0.07, 0.04, 0);
+      deputyGroup.add(legL.group);
+      deputyGroup.add(legR.group);
+
+      deputyGroup.userData = { type: 'deputy', faction: faction, isOpportunist: isOpportunist };
+
+      return deputyGroup;
+  }
+
+  function createPolygonalFox() {
+      const foxGroup = new THREE.Group();
+      const orange = 0xff5500;
+      const white = 0xffffff;
+      const black = 0x151515;
+
+      // 1. Torso body box
+      const body = createOutlinedBox(0.48, 0.24, 0.24, orange);
+      body.group.position.y = 0.2;
+      foxGroup.add(body.group);
+
+      // 2. Neck and White Chest
+      const neck = createOutlinedBox(0.2, 0.18, 0.2, orange);
+      neck.group.position.set(0.18, 0.32, 0);
+      foxGroup.add(neck.group);
+
+      const chestWhite = createOutlinedBox(0.04, 0.12, 0.16, white);
+      chestWhite.group.position.set(0.27, 0.28, 0);
+      foxGroup.add(chestWhite.group);
+
+      // 3. Head
+      const head = createOutlinedBox(0.22, 0.22, 0.22, orange);
+      head.group.position.set(0.3, 0.41, 0);
+      foxGroup.add(head.group);
+
+      // 4. Snout pointing forward
+      const snout = createOutlinedBox(0.12, 0.08, 0.1, orange);
+      snout.group.position.set(0.45, 0.37, 0);
+      foxGroup.add(snout.group);
+
+      const noseTip = createOutlinedBox(0.04, 0.04, 0.04, black);
+      noseTip.group.position.set(0.52, 0.39, 0);
+      foxGroup.add(noseTip.group);
+
+      // 5. Ears
+      const earL = createOutlinedBox(0.05, 0.12, 0.07, orange);
+      earL.group.position.set(0.24, 0.54, 0.06);
+      earL.group.rotation.z = -0.2;
+      const earR = createOutlinedBox(0.05, 0.12, 0.07, orange);
+      earR.group.position.set(0.24, 0.54, -0.06);
+      earR.group.rotation.z = -0.2;
+      foxGroup.add(earL.group);
+      foxGroup.add(earR.group);
+
+      // Inner ears
+      const innerEarL = createOutlinedBox(0.02, 0.07, 0.04, black);
+      innerEarL.group.position.set(0.26, 0.54, 0.06);
+      innerEarL.group.rotation.z = -0.2;
+      const innerEarR = createOutlinedBox(0.02, 0.07, 0.04, black);
+      innerEarR.group.position.set(0.26, 0.54, -0.06);
+      innerEarR.group.rotation.z = -0.2;
+      foxGroup.add(innerEarL.group);
+      foxGroup.add(innerEarR.group);
+
+      // 6. Running Legs
+      const legFL = createOutlinedBox(0.07, 0.2, 0.07, orange);
+      legFL.group.position.set(0.16, 0.07, 0.08);
+      const sockFL = createOutlinedBox(0.072, 0.07, 0.072, black);
+      sockFL.group.position.set(0.16, 0.01, 0.08);
+      
+      const legFR = createOutlinedBox(0.07, 0.2, 0.07, orange);
+      legFR.group.position.set(0.16, 0.07, -0.08);
+      const sockFR = createOutlinedBox(0.072, 0.07, 0.072, black);
+      sockFR.group.position.set(0.16, 0.01, -0.08);
+
+      const legBL = createOutlinedBox(0.07, 0.2, 0.07, orange);
+      legBL.group.position.set(-0.16, 0.07, 0.08);
+      const sockBL = createOutlinedBox(0.072, 0.07, 0.072, black);
+      sockBL.group.position.set(-0.16, 0.01, 0.08);
+
+      const legBR = createOutlinedBox(0.07, 0.2, 0.07, orange);
+      legBR.group.position.set(-0.16, 0.07, -0.08);
+      const sockBR = createOutlinedBox(0.072, 0.07, 0.072, black);
+      sockBR.group.position.set(-0.16, 0.01, -0.08);
+
+      foxGroup.add(legFL.group); foxGroup.add(sockFL.group);
+      foxGroup.add(legFR.group); foxGroup.add(sockFR.group);
+      foxGroup.add(legBL.group); foxGroup.add(sockBL.group);
+      foxGroup.add(legBR.group); foxGroup.add(sockBR.group);
+
+      foxGroup.userData = {
+          legs: [legFL.group, legFR.group, legBL.group, legBR.group],
+          socks: [sockFL.group, sockFR.group, sockBL.group, sockBR.group]
+      };
+
+      // 7. Chain tail
+      const tail1 = createOutlinedBox(0.14, 0.14, 0.14, orange);
+      tail1.group.position.set(-0.3, 0.22, 0);
+      tail1.group.rotation.z = 0.4;
+      
+      const tail2 = createOutlinedBox(0.12, 0.12, 0.12, orange);
+      tail2.group.position.set(-0.4, 0.27, 0);
+      tail2.group.rotation.z = 0.4;
+
+      const tail3Tip = createOutlinedBox(0.1, 0.1, 0.1, white);
+      tail3Tip.group.position.set(-0.49, 0.32, 0);
+      tail3Tip.group.rotation.z = 0.4;
+
+      foxGroup.add(tail1.group);
+      foxGroup.add(tail2.group);
+      foxGroup.add(tail3Tip.group);
+
+      foxGroup.userData.tail = [tail1.group, tail2.group, tail3Tip.group];
+
+      return foxGroup;
+  }
+
+  function disposeGroup(group) {
+      group.traverse((child) => {
+          if (child.isMesh || child.isLineSegments) {
+              if (child.geometry) child.geometry.dispose();
+              if (child.material) {
+                  if (Array.isArray(child.material)) {
+                      child.material.forEach(m => m.dispose());
+                  } else {
+                      child.material.dispose();
+                  }
+              }
+          }
+      });
+  }
+
+  // --- 5. BANCADAS Y DISTRIBUCIÓN DE ESCAÑOS ---
+  const slots = {
+      democrat: [],
+      eroder: []
+  };
+
+  const staticDemocrats = [];
+  const staticEroders = [];
+  const dynamicOpportunists = []; // The only moving group! Yellow head, body adapts to group.
+
+  // Democrats (Arc, left)
+  const demCenter = new THREE.Vector3(-4.5, 0, 0);
+  const demRows = [0.8, 1.5, 2.2];
+  const demCounts = [5, 8, 10];
+  
+  demRows.forEach((r, rIdx) => {
+      const count = demCounts[rIdx];
+      for (let i = 0; i < count; i++) {
+          const frac = count > 1 ? i / (count - 1) : 0.5;
+          const theta = Math.PI / 2 + frac * Math.PI; // Semicircle left
+          const lx = demCenter.x + Math.cos(theta) * r;
+          const lz = demCenter.z + Math.sin(theta) * r * 0.95;
+          slots.democrat.push({
+              position: new THREE.Vector3(lx, 0, lz),
+              angle: theta + Math.PI,
+              occupied: false,
+              guestOccupied: false
+          });
+      }
+  });
+
+  // Eroders (Arc, right)
+  const eroCenter = new THREE.Vector3(4.5, 0, 0);
+  const eroRows = [0.8, 1.5, 2.2];
+  const eroCounts = [5, 8, 10];
+  
+  eroRows.forEach((r, rIdx) => {
+      const count = eroCounts[rIdx];
+      for (let i = 0; i < count; i++) {
+          const frac = count > 1 ? i / (count - 1) : 0.5;
+          const theta = -Math.PI / 2 + frac * Math.PI; // Semicircle right
+          const lx = eroCenter.x + Math.cos(theta) * r;
+          const lz = eroCenter.z + Math.sin(theta) * r * 0.95;
+          slots.eroder.push({
+              position: new THREE.Vector3(lx, 0, lz),
+              angle: theta + Math.PI,
+              occupied: false,
+              guestOccupied: false
+          });
+      }
+  });
+
+  // Spawn permanent observers
+  function spawnStaticBenches() {
+      // Populate Democrats - They never change!
+      slots.democrat.forEach((slot, index) => {
+          if (index % 3 !== 0) {
+              const mesh = createBlockyDeputy('democrat', false);
+              mesh.position.copy(slot.position);
+              mesh.rotation.y = slot.angle;
+              scene.add(mesh);
+              
+              staticDemocrats.push({
+                  mesh: mesh,
+                  slot: slot,
+                  breathOffset: Math.random() * Math.PI * 2
+              });
+              slot.occupied = true;
+          }
+      });
+
+      // Populate Eroders - They never change!
+      slots.eroder.forEach((slot, index) => {
+          if (index % 3 !== 0) {
+              const mesh = createBlockyDeputy('eroder', false);
+              mesh.position.copy(slot.position);
+              mesh.rotation.y = slot.angle;
+              scene.add(mesh);
+              
+              staticEroders.push({
+                  mesh: mesh,
+                  slot: slot,
+                  breathOffset: Math.random() * Math.PI * 2
+              });
+              slot.occupied = true;
+          }
+      });
+  }
+
+  // Spawn Dynamic Opportunists
+  function spawnDynamicOpportunists() {
+      const numOpportunists = 5;
+      for (let i = 0; i < numOpportunists; i++) {
+          const initSector = i % 2 === 0 ? 'democrat' : 'eroder';
+          const sectorSlots = slots[initSector];
+          
+          const freeSlot = sectorSlots.find(s => !s.occupied && !s.guestOccupied);
+          if (freeSlot) {
+              const mesh = createBlockyDeputy(initSector, true); // has yellow head!
+              mesh.position.copy(freeSlot.position);
+              mesh.rotation.y = freeSlot.angle;
+              scene.add(mesh);
+
+              dynamicOpportunists.push({
+                  mesh: mesh,
+                  currentSector: initSector,
+                  slot: freeSlot,
+                  breathOffset: Math.random() * Math.PI * 2
+              });
+              
+              freeSlot.guestOccupied = true;
+          }
+      }
+  }
+
+  // --- 6. AUTOMATED TRANSITION SYSTEM (GOLD FIGURES <-> FOX RUN) ---
+  const activeTransmutations = [];
+
+  function triggerOpportunistMove(oppObj, targetSector, targetSlot) {
+      if (!oppObj || !targetSector || !targetSlot) return;
+      
+      // Clean up dialogues for this deputy
+      for (let i = activeSpeechBubbles.length - 1; i >= 0; i--) {
+          const bubble = activeSpeechBubbles[i];
+          if (bubble.deputy === oppObj) {
+              scene.remove(bubble.sprite);
+              bubble.texture.dispose();
+              bubble.material.dispose();
+              activeSpeechBubbles.splice(i, 1);
+          }
+      }
+
+      const startPos = new THREE.Vector3().copy(oppObj.mesh.position);
+      const endPos = new THREE.Vector3().copy(targetSlot.position);
+      
+      // Spawn running polygonal Fox
+      const foxMesh = createPolygonalFox();
+      foxMesh.position.copy(startPos);
+      foxMesh.scale.setScalar(0.01);
+      scene.add(foxMesh);
+
+      const transmutation = {
+          oppObj: oppObj,
+          sourceSector: oppObj.currentSector,
+          targetSector: targetSector,
+          targetSlot: targetSlot,
+          startPos: startPos,
+          endPos: endPos,
+          foxMesh: foxMesh,
+          progress: 0.0,
+          phase: 'morph_in',
+          timeElapsed: 0,
+          jumpHeight: 2.2 + Math.random() * 0.8
+      };
+
+      scene.remove(oppObj.mesh);
+      disposeGroup(oppObj.mesh);
+      oppObj.mesh = null;
+
+      activeTransmutations.push(transmutation);
+  }
+
+  function updateTransmutations(delta) {
+      for (let i = activeTransmutations.length - 1; i >= 0; i--) {
+          const tr = activeTransmutations[i];
+          tr.timeElapsed += delta;
+
+          if (tr.phase === 'morph_in') {
+              const s = tr.timeElapsed / 0.18; // 180ms
+              if (s >= 1.0) {
+                  tr.foxMesh.scale.setScalar(1.0);
+                  tr.phase = 'run';
+                  tr.timeElapsed = 0;
+              } else {
+                  tr.foxMesh.scale.setScalar(s);
+              }
+          } 
+          else if (tr.phase === 'run') {
+              const duration = 2.4;
+              tr.progress = tr.timeElapsed / duration;
+
+              if (tr.progress >= 1.0) {
+                  tr.foxMesh.position.copy(tr.endPos);
+                  tr.phase = 'morph_out';
+                  tr.timeElapsed = 0;
+              } else {
+                  const currentPos = getBezierPoint(tr.startPos, tr.endPos, tr.jumpHeight, tr.progress);
+                  tr.foxMesh.position.copy(currentPos);
+
+                  const nextPos = getBezierPoint(tr.startPos, tr.endPos, tr.jumpHeight, Math.min(tr.progress + 0.02, 1.0));
+                  const direction = new THREE.Vector3().subVectors(nextPos, currentPos).normalize();
+                  if (direction.lengthSq() > 0.0001) {
+                      const angle = Math.atan2(direction.x, direction.z);
+                      tr.foxMesh.rotation.y = angle - Math.PI / 2;
+                  }
+
+                  const runCycle = tr.timeElapsed * 15;
+                  tr.foxMesh.position.y += Math.abs(Math.sin(runCycle)) * 0.12;
+                  tr.foxMesh.rotation.x = Math.sin(runCycle) * 0.06;
+
+                  const legs = tr.foxMesh.userData.legs;
+                  if (legs) {
+                      legs[0].rotation.z = Math.sin(runCycle) * 0.55;
+                      legs[1].rotation.z = -Math.sin(runCycle) * 0.55;
+                      legs[2].rotation.z = -Math.sin(runCycle) * 0.55;
+                      legs[3].rotation.z = Math.sin(runCycle) * 0.55;
+                  }
+
+                  const tail = tr.foxMesh.userData.tail;
+                  if (tail) {
+                      tail.forEach((seg, idx) => {
+                          seg.rotation.y = Math.sin(runCycle + idx) * 0.22;
+                      });
+                  }
+              }
+          } 
+          else if (tr.phase === 'morph_out') {
+              const s = 1.0 - (tr.timeElapsed / 0.18);
+              if (s <= 0.0) {
+                  scene.remove(tr.foxMesh);
+                  disposeGroup(tr.foxMesh);
+
+                  const finalMesh = createBlockyDeputy(tr.targetSector, true);
+                  finalMesh.position.copy(tr.targetSlot.position);
+                  finalMesh.rotation.y = tr.targetSlot.angle;
+                  scene.add(finalMesh);
+
+                  const opp = tr.oppObj;
+                  opp.mesh = finalMesh;
+                  opp.slot = tr.targetSlot;
+                  opp.currentSector = tr.targetSector;
+                  opp.breathOffset = Math.random() * Math.PI * 2;
+
+                  activeTransmutations.splice(i, 1);
+              } else {
+                  tr.foxMesh.scale.setScalar(s);
+              }
+          }
+      }
+  }
+
+  function getBezierPoint(start, end, height, t) {
+      const p0 = new THREE.Vector3().copy(start);
+      const p1 = new THREE.Vector3().copy(start);
+      p1.y += height;
+      
+      const p2 = new THREE.Vector3().copy(end);
+      p2.y += height;
+      
+      const p3 = new THREE.Vector3().copy(end);
+      
+      const oneMinusT = 1 - t;
+      const term0 = p0.multiplyScalar(oneMinusT * oneMinusT * oneMinusT);
+      const term1 = p1.multiplyScalar(3 * oneMinusT * oneMinusT * t);
+      const term2 = p2.multiplyScalar(3 * oneMinusT * t * t);
+      const term3 = p3.multiplyScalar(t * t * t);
+      
+      return term0.add(term1).add(term2).add(term3);
+  }
+
+  function triggerRandomAutomaticMove() {
+      // Find an opportunist that is currently sitting and NOT already pre-jumping or transmuting
+      const idleOpps = dynamicOpportunists.filter(o => o.mesh && o.mesh.parent && !o.preJump && !activeTransmutations.some(tr => tr.oppObj === o));
+      if (idleOpps.length === 0) return;
+      if (activeTransmutations.length >= 2) return;
+
+      const opp = idleOpps[Math.floor(Math.random() * idleOpps.length)];
+      const targetSector = opp.currentSector === 'democrat' ? 'eroder' : 'democrat';
+      
+      // Find target empty slot
+      const sectorSlots = slots[targetSector];
+      const freeSlot = sectorSlots.find(s => !s.occupied && !s.guestOccupied);
+      if (!freeSlot) return;
+
+      // Reserve target guest spot immediately
+      freeSlot.guestOccupied = true;
+      opp.slot.guestOccupied = false; // Free original slot for others to target
+
+      // Select opportunistic dialogue and spawn immediately
+      const texts = dialogOptions.opportunist;
+      const text = texts[Math.floor(Math.random() * texts.length)];
+      spawnSpeechBubbleForDeputy(opp, 'opportunist', text, 1.8);
+
+      // Start pre-jump wait phase (1.8 seconds)
+      opp.preJump = {
+          targetSector: targetSector,
+          targetSlot: freeSlot,
+          timer: 1.8
+      };
+  }
+
+  // --- 6.5. SISTEMA DE GLOBOS DE DIÁLOGO Y DELIBERACIÓN ---
+  const activeSpeechBubbles = [];
+  
+  const dialogOptions = {
+      democrat: [
+          "Democracia!", "Derechos!", "Legalidad",
+          "Libertad de\nprensa!", "Derechos\nhumanos!", "Checks and\nBalances!", "Diversidad!"
+      ],
+      eroder: [
+          "Orden!", "Autoridad!", "Liderazgo!",
+          "Seguridad!", "Soberanía!", "Pueblo!", "Nación!"
+      ],
+      opportunist: [
+          "¿Y mi cargo?", "¿Cuánto hay?", "Trato hecho 🤝", "¿Pacto?", 
+          "Según el viento 🍃", "Me conviene...", "€", "🦊 Ja, ja", "!?",
+          "Prebenda!", "Enmienda\nparlamentaria!", "Carguito!", "Todo por\nel sillón!"
+      ]
+  };
+
+  function createSpeechBubbleTexture(text, faction) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+      
+      let fillStyle = '#ffffff';
+      if (faction === 'democrat') fillStyle = '#e3f2fd';      // Azul pastel
+      else if (faction === 'eroder') fillStyle = '#ffebee';    // Rojo pastel
+      else if (faction === 'opportunist') fillStyle = '#fffde7'; // Amarillo pastel
+      
+      ctx.clearRect(0, 0, 256, 128);
+      
+      const x = 10, y = 10, w = 236, h = 80, r = 14;
+      ctx.fillStyle = fillStyle;
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 4;
+      
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      
+      ctx.lineTo(128 + 15, y + h);
+      ctx.lineTo(128, y + h + 22);
+      ctx.lineTo(128 - 15, y + h);
+      
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 4;
+      ctx.shadowOffsetY = 4;
+      ctx.fill();
+      
+      ctx.shadowColor = 'transparent';
+      ctx.stroke();
+      
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 22px "Courier New", monospace, Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      const lines = text.split('\n');
+      if (lines.length > 1) {
+          const lineHeight = 24;
+          const startY = (y + h/2) - (lineHeight * (lines.length - 1)) / 2;
+          lines.forEach((line, index) => {
+              ctx.fillText(line, 128, startY + index * lineHeight + 2);
+          });
+      } else {
+          ctx.fillText(text, 128, y + h/2 + 2);
+      }
+      
+      return new THREE.CanvasTexture(canvas);
+  }
+
+  function spawnSpeechBubbleForDeputy(deputy, faction, text, duration = 2.2) {
+      deputy.mesh.userData.talking = true;
+      
+      const texture = createSpeechBubbleTexture(text, faction);
+      const material = new THREE.SpriteMaterial({ 
+          map: texture, 
+          transparent: true,
+          depthTest: true
+      });
+      const sprite = new THREE.Sprite(material);
+      
+      sprite.scale.set(1.6, 0.8, 1.0);
+      sprite.position.copy(deputy.mesh.position);
+      sprite.position.y += 1.15;
+      sprite.scale.setScalar(0.01);
+      
+      scene.add(sprite);
+      
+      activeSpeechBubbles.push({
+          sprite: sprite,
+          deputy: deputy,
+          texture: texture,
+          material: material,
+          elapsed: 0.0,
+          duration: duration,
+          phase: 'in',
+          initialScaleX: 1.6,
+          initialScaleY: 0.8,
+          floatOffset: Math.random() * Math.PI * 2
+      });
+  }
+
+  function spawnSpeechBubble() {
+      if (activeSpeechBubbles.length >= 3) return;
+
+      const oppCandidates = [];
+      const demCandidates = [];
+      const eroCandidates = [];
+      
+      staticDemocrats.forEach(d => {
+          if (!d.mesh.userData.talking) demCandidates.push(d);
+      });
+      staticEroders.forEach(e => {
+          if (!e.mesh.userData.talking) eroCandidates.push(e);
+      });
+      dynamicOpportunists.forEach(o => {
+          // Make sure they are not talking, pre-jumping or transmuting!
+          if (o.mesh && o.mesh.parent && !o.mesh.userData.talking && !o.preJump && !activeTransmutations.some(tr => tr.oppObj === o)) {
+              oppCandidates.push(o);
+          }
+      });
+
+      let faction = null;
+      let deputy = null;
+      
+      const rand = Math.random();
+      if (rand < 0.25 && oppCandidates.length > 0) { // 25% bias to Opportunists
+          faction = 'opportunist';
+          deputy = oppCandidates[Math.floor(Math.random() * oppCandidates.length)];
+      } else {
+          // Choose between democrat and eroder in a balanced 50/50 way if both pools have candidates
+          if (demCandidates.length > 0 && eroCandidates.length > 0) {
+              const pickDem = Math.random() < 0.5;
+              if (pickDem) {
+                  faction = 'democrat';
+                  deputy = demCandidates[Math.floor(Math.random() * demCandidates.length)];
+              } else {
+                  faction = 'eroder';
+                  deputy = eroCandidates[Math.floor(Math.random() * eroCandidates.length)];
+              }
+          } else if (demCandidates.length > 0) {
+              faction = 'democrat';
+              deputy = demCandidates[Math.floor(Math.random() * demCandidates.length)];
+          } else if (eroCandidates.length > 0) {
+              faction = 'eroder';
+              deputy = eroCandidates[Math.floor(Math.random() * eroCandidates.length)];
+          } else if (oppCandidates.length > 0) {
+              faction = 'opportunist';
+              deputy = oppCandidates[Math.floor(Math.random() * oppCandidates.length)];
+          }
+      }
+
+      if (!deputy) return;
+
+      const texts = dialogOptions[faction];
+      const text = texts[Math.floor(Math.random() * texts.length)];
+      
+      spawnSpeechBubbleForDeputy(deputy, faction, text);
+  }
+
+  function updateSpeechBubbles(delta, time) {
+      for (let i = activeSpeechBubbles.length - 1; i >= 0; i--) {
+          const bubble = activeSpeechBubbles[i];
+          bubble.elapsed += delta;
+          
+          if (bubble.deputy && bubble.deputy.mesh && bubble.deputy.mesh.parent) {
+              bubble.sprite.position.copy(bubble.deputy.mesh.position);
+              const floatY = Math.sin(time * 3.5 + bubble.floatOffset) * 0.03;
+              bubble.sprite.position.y += 1.15 + floatY;
+          } else {
+              bubble.phase = 'out';
+          }
+          
+          if (bubble.phase === 'in') {
+              const progress = bubble.elapsed / 0.25;
+              if (progress >= 1.0) {
+                  bubble.sprite.scale.set(bubble.initialScaleX, bubble.initialScaleY, 1.0);
+                  bubble.phase = 'show';
+                  bubble.elapsed = 0;
+              } else {
+                  const s = Math.min(progress * 1.15, 1.0);
+                  bubble.sprite.scale.set(bubble.initialScaleX * s, bubble.initialScaleY * s, 1.0);
+              }
+          } 
+          else if (bubble.phase === 'show') {
+              if (bubble.elapsed >= bubble.duration) {
+                  bubble.phase = 'out';
+                  bubble.elapsed = 0;
+              }
+          } 
+          else if (bubble.phase === 'out') {
+              const progress = bubble.elapsed / 0.25;
+              if (progress >= 1.0) {
+                  scene.remove(bubble.sprite);
+                  bubble.texture.dispose();
+                  bubble.material.dispose();
+                  
+                  if (bubble.deputy && bubble.deputy.mesh) {
+                      bubble.deputy.mesh.userData.talking = false;
+                  }
+                  
+                  activeSpeechBubbles.splice(i, 1);
+              } else {
+                  const s = 1.0 - progress;
+                  bubble.sprite.scale.set(bubble.initialScaleX * s, bubble.initialScaleY * s, 1.0);
+              }
+          }
+      }
+  }
+
+  // --- 7. THEME INTEGRATION ---
+  function applyTheme() {
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (dark) {
+          scene.background.setHex(0x111110); // matches var(--bg) in dark mode
+          
+          ambientLight.intensity = 0.4;
+          sunLight.intensity = 0.8;
+          
+          demLight.intensity = 2.0;
+          eroLight.intensity = 2.0;
+          oppLight.intensity = 1.2;
+      } else {
+          scene.background.setHex(0xFFFEF5); // matches var(--bg) in light mode
+          
+          ambientLight.intensity = 0.85;
+          sunLight.intensity = 0.65;
+          
+          demLight.intensity = 1.0;
+          eroLight.intensity = 1.0;
+          oppLight.intensity = 0.6;
+      }
+  }
+
+  applyTheme();
+  new MutationObserver(applyTheme)
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // --- 8. TICK LOOP ---
+  spawnStaticBenches();
+  spawnDynamicOpportunists();
+  
+  const clock = new THREE.Clock();
+
+  let lastAutoTriggerTime = 0;
+  const autoTriggerInterval = 3.6;
+  
+  let lastDialogSpawnTime = 0;
+  const dialogSpawnInterval = 1.0;
+
+  let isPlaying = false;
+  let rafId = null;
+
+  function tick() {
+      if (!isPlaying) return;
+      rafId = requestAnimationFrame(tick);
+
+      const delta = Math.min(clock.getDelta(), 0.05); // cap delta
+      const time = clock.getElapsedTime();
+
+      controls.update();
+
+      // Parallax reactivo
+      const angle = controls.getAzimuthalAngle();
+      const shiftX = Math.sin(angle) * 18;
+      const shiftY = Math.cos(angle) * 10;
+      
+      const titleWrapper = document.getElementById('parallax-title');
+      if (titleWrapper) {
+          titleWrapper.style.transform = `translate(${shiftX}px, ${shiftY}px)`;
+      }
+      
+      const footerSubtitle = document.getElementById('parallax-subtitle');
+      if (footerSubtitle) {
+          footerSubtitle.style.transform = `translate(${-shiftX * 0.7}px, ${-shiftY * 0.6}px)`;
+      }
+      
+      const authorCard = document.getElementById('parallax-author');
+      if (authorCard) {
+          authorCard.style.transform = `translate(${shiftX * 0.5}px, ${-shiftY * 0.4}px)`;
+      }
+
+      updateTransmutations(delta);
+      updateSpeechBubbles(delta, time);
+
+      // Stable Democrats breathing
+      staticDemocrats.forEach(d => {
+          d.mesh.position.y = Math.sin(time * 1.8 + d.breathOffset) * 0.015;
+          const head = d.mesh.children[2];
+          if (head) {
+              head.rotation.y = Math.sin(time * 0.6 + d.breathOffset) * 0.08;
+          }
+      });
+
+      // Stable Eroders breathing
+      staticEroders.forEach(d => {
+          d.mesh.position.y = Math.sin(time * 1.8 + d.breathOffset) * 0.015;
+          const head = d.mesh.children[2];
+          if (head) {
+              head.rotation.y = Math.sin(time * 0.6 + d.breathOffset) * 0.08;
+          }
+      });
+
+      // Dynamic Opportunists breathing and pre-jump timers
+      dynamicOpportunists.forEach(opp => {
+          if (opp.preJump) {
+              opp.preJump.timer -= delta;
+              if (opp.preJump.timer <= 0) {
+                  const targetSector = opp.preJump.targetSector;
+                  const targetSlot = opp.preJump.targetSlot;
+                  opp.preJump = null; // Clear preJump state
+                  triggerOpportunistMove(opp, targetSector, targetSlot);
+              }
+          }
+
+          if (opp.mesh && opp.mesh.parent) {
+              opp.mesh.position.y = opp.slot.position.y + Math.sin(time * 2.2 + opp.breathOffset) * 0.02;
+              const head = opp.mesh.children[2];
+              if (head) {
+                  head.rotation.y = Math.sin(time * 0.8 + opp.breathOffset) * 0.1;
+              }
+          }
+      });
+
+      if (time - lastAutoTriggerTime > autoTriggerInterval) {
+          triggerRandomAutomaticMove();
+          lastAutoTriggerTime = time;
+      }
+
+      if (time - lastDialogSpawnTime > dialogSpawnInterval) {
+          if (Math.random() < 0.9) {
+              spawnSpeechBubble();
+          }
+          lastDialogSpawnTime = time;
+      }
+
+      renderer.render(scene, camera);
+  }
+
+  function play() {
+      if (isPlaying) return;
+      isPlaying = true;
+      clock.getDelta(); // flush delta accumulator
+      rafId = requestAnimationFrame(tick);
+  }
+
+  function pause() {
+      isPlaying = false;
+      if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+      }
+  }
+
+  // --- 9. WINDOW RESIZE HANDLER ---
+  function onResize() {
+      const W = container.offsetWidth || window.innerWidth;
+      const H = container.offsetHeight || window.innerHeight;
+      camera.aspect = W / H;
+      camera.updateProjectionMatrix();
+      renderer.setSize(W, H);
+  }
+  window.addEventListener('resize', onResize);
+
+  // --- 10. INTERSECTION OBSERVER FOR POWER SAVING ---
+  new IntersectionObserver(
+      es => es[0].isIntersecting ? play() : pause(),
+      { threshold: 0.3 }
+  ).observe(slide);
+
+})();
 </script>
 </body>
 </html>
