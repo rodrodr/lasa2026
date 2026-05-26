@@ -524,7 +524,9 @@
       grid-template-columns: 1fr 1fr 1fr;
       gap: var(--sp-4);
     }
-    .lit-card { padding: var(--sp-6); }
+    .lit-card { 
+      padding: var(--sp-6); 
+    }
     .lit-type {
       font-family: var(--f-body);
       font-size: 0.68rem;
@@ -1156,6 +1158,7 @@
         </div>
       </div>
     </div>
+    <div id="ants-container" style="position: absolute; bottom: 52px; left: 0; width: 100%; height: 160px; pointer-events: none; z-index: 200; overflow: hidden;"></div>
   </section>
 
   <!-- ── DIAPOSITIVA 4 ── PREGUNTAS ────────────────────────── -->
@@ -2862,6 +2865,9 @@
   gavelGroup.add(gavelHead.group);
 
   // --- 6.1. PELVIS Y CALZONCILLOS DE LUNARES ROJOS ---
+  const boxerWhiteMeshes = [];
+  const boxerRedMeshes = [];
+
   const undiesGroup = new THREE.Group();
   undiesGroup.position.set(0, -0.06, -0.01); // Colocado justo abajo de la chaqueta (y = 0)
   bukeleGroup.add(undiesGroup);
@@ -2870,6 +2876,7 @@
   const pelvis = createOutlinedBox(0.32, 0.12, 0.18, 0xffffff);
   pelvis.group.position.y = 0; // Centrado en undiesGroup
   undiesGroup.add(pelvis.group);
+  boxerWhiteMeshes.push(pelvis.mesh);
 
   // Lunares rojos en la pelvis (Cajitas rojas pequeñas a los lados)
   const dotsData = [
@@ -2887,6 +2894,7 @@
           dot.group.scale.set(0.5, 1, 2); // alargar lateralmente
       }
       undiesGroup.add(dot.group);
+      boxerRedMeshes.push(dot.mesh);
   });
 
   // --- 6.2. PIERNAS QUE PATALEAN (Bóxer blanco, Lunares, Piel y Zapatitos) ---
@@ -2898,6 +2906,7 @@
   const boxerL = createOutlinedBox(0.11, 0.08, 0.11, 0xffffff);
   boxerL.group.position.y = -0.04;
   legLGroup.add(boxerL.group);
+  boxerWhiteMeshes.push(boxerL.mesh);
 
   // Lunares en la pierna del calzoncillo L
   const dotL1 = createOutlinedBox(0.025, 0.025, 0.112, 0xff0000);
@@ -2906,6 +2915,7 @@
   dotL2.group.position.set(0, -0.05, 0.045);
   legLGroup.add(dotL1.group);
   legLGroup.add(dotL2.group);
+  boxerRedMeshes.push(dotL1.mesh, dotL2.mesh);
 
   // Pierna desnuda (color piel)
   const bareLegL = createOutlinedBox(0.076, 0.16, 0.076, headColor);
@@ -2925,6 +2935,7 @@
   const boxerR = createOutlinedBox(0.11, 0.08, 0.11, 0xffffff);
   boxerR.group.position.y = -0.04;
   legRGroup.add(boxerR.group);
+  boxerWhiteMeshes.push(boxerR.mesh);
 
   // Lunares en la pierna del calzoncillo R
   const dotR1 = createOutlinedBox(0.025, 0.025, 0.112, 0xff0000);
@@ -2933,6 +2944,7 @@
   dotR2.group.position.set(0, -0.05, 0.045);
   legRGroup.add(dotR1.group);
   legRGroup.add(dotR2.group);
+  boxerRedMeshes.push(dotR1.mesh, dotR2.mesh);
 
   const bareLegR = createOutlinedBox(0.076, 0.16, 0.076, headColor);
   bareLegR.group.position.y = -0.16;
@@ -3230,11 +3242,45 @@
           ambientLight.intensity = 0.45;
           spotLight.intensity = 0.95;
           spotLight.color.setHex(0xffffff);
+
+          // Traje Blanco en modo oscuro
+          if (typeof torso !== 'undefined' && torso.mesh) torso.mesh.material.color.setHex(0xffffff);
+          if (typeof armL !== 'undefined' && armL.mesh) armL.mesh.material.color.setHex(0xffffff);
+          if (typeof armR !== 'undefined' && armR.mesh) armR.mesh.material.color.setHex(0xffffff);
+
+          // Calzoncillo Rojo con lunares blancos en modo oscuro
+          if (typeof boxerWhiteMeshes !== 'undefined') {
+              boxerWhiteMeshes.forEach(mesh => {
+                  mesh.material.color.setHex(0xff0000); // base roja
+              });
+          }
+          if (typeof boxerRedMeshes !== 'undefined') {
+              boxerRedMeshes.forEach(mesh => {
+                  mesh.material.color.setHex(0xffffff); // lunares blancos
+              });
+          }
       } else {
           scene.background.setHex(0xFFFEF5);
           ambientLight.intensity = 0.85;
           spotLight.intensity = 0.65;
           spotLight.color.setHex(0xffffff);
+
+          // Traje Gris Carbón en modo claro
+          if (typeof torso !== 'undefined' && torso.mesh) torso.mesh.material.color.setHex(0x1e1e24);
+          if (typeof armL !== 'undefined' && armL.mesh) armL.mesh.material.color.setHex(0x1e1e24);
+          if (typeof armR !== 'undefined' && armR.mesh) armR.mesh.material.color.setHex(0x1e1e24);
+
+          // Calzoncillo Blanco con lunares rojos en modo claro
+          if (typeof boxerWhiteMeshes !== 'undefined') {
+              boxerWhiteMeshes.forEach(mesh => {
+                  mesh.material.color.setHex(0xffffff); // base blanca
+              });
+          }
+          if (typeof boxerRedMeshes !== 'undefined') {
+              boxerRedMeshes.forEach(mesh => {
+                  mesh.material.color.setHex(0xff0000); // lunares rojos
+              });
+          }
       }
   }
   
@@ -3313,6 +3359,638 @@
   // Ajustar tamaño inicial al montarse
   setTimeout(onResize, 100);
 
+})();
+</script>
+
+<!-- ── ANIMACIÓN DE HORMIGAS EN DIAPOSITIVA DE LITERATURA (THREE.JS) ── -->
+<script>
+(function() {
+  const container = document.getElementById('ants-container');
+  const slide = document.getElementById('slide-3');
+  if (!container || !slide) return;
+
+  let scene, camera, renderer;
+  let ambientLight, dirLight;
+  let isPlaying = false;
+  let rafId = null;
+  const ants = [];
+  const allAntMeshes = [];
+  const allStripeMeshes = [];
+  const allJointMeshes = [];
+
+  // --- 1. CONFIGURACIÓN INICIAL DE THREE.JS ---
+  scene = new THREE.Scene();
+
+  // Cámara ortográfica ideal para visualización tipo scroll 2D lateral
+  camera = new THREE.OrthographicCamera(-2, 2, 1, -1, 0.1, 100);
+  camera.position.set(0, 0, 12);
+
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = false; // no requerimos sombras complejas para mantener alto rendimiento
+  container.appendChild(renderer.domElement);
+
+  // Iluminación
+  ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+  scene.add(ambientLight);
+
+  // Dos luces direccionales para crear brillos especulares realistas en la quitina brillante
+  dirLight = new THREE.DirectionalLight(0xffffff, 0.70);
+  dirLight.position.set(-2, 4, 3);
+  scene.add(dirLight);
+
+  const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.45);
+  dirLight2.position.set(3, 1, 4);
+  scene.add(dirLight2);
+
+  // --- 2. CREADOR DE COMPONENTES DE HORMIGA (HIGH-FIDELITY SMOOTH PHYSICAL SHADING) ---
+  function createAntComponent(geom, colorHex) {
+      const group = new THREE.Group();
+      // MeshPhysicalMaterial con sombreado suave (flatShading: false) para que sea súper realista
+      const mat = new THREE.MeshPhysicalMaterial({
+          color: colorHex,
+          roughness: 0.12,          // Muy brillante e impermeable, igual que el exoesqueleto orgánico
+          metalness: 0.05,
+          clearcoat: 1.0,           // Barniz exterior hiper-reflectante
+          clearcoatRoughness: 0.04,
+          flatShading: false        // Sombreado curvado perfecto, no facetado/blocky
+      });
+      const mesh = new THREE.Mesh(geom, mat);
+      group.add(mesh);
+      
+      // Contorno ultra-nítido de silueta (EdgesGeometry con ángulo para no saturar)
+      const edges = new THREE.EdgesGeometry(geom, 25);
+      const lineMat = new THREE.LineBasicMaterial({ color: 0x000000 });
+      const lines = new THREE.LineSegments(edges, lineMat);
+      group.add(lines);
+      
+      return { group, mesh };
+  }
+
+  // --- 3. MODELADO PROCEDURAL DE HORMIGA NEOBRUTALISTA REALISTA (ESFERAS Y CILINDROS CON ACABADO ULTRA-PREMIUM) ---
+  function buildAntModel(colorHex) {
+      const antGroup = new THREE.Group();
+      
+      // Contenedor interno para animaciones del cuerpo sin alterar la escala del grupo principal
+      const bodyContainer = new THREE.Group();
+      antGroup.add(bodyContainer);
+      
+      // Cabeza (Esférica piriforme inclinada hacia abajo)
+      const headGeom = new THREE.SphereGeometry(0.075, 16, 16);
+      const head = createAntComponent(headGeom, colorHex);
+      head.group.position.set(0.18, 0.05, 0);
+      head.group.scale.set(1.3, 0.95, 0.95);
+      head.group.rotation.z = -0.25; // inclinación elegante
+      bodyContainer.add(head.group);
+
+      // Ojos de Hormiga (Sleek piano black)
+      const eyeGeom = new THREE.SphereGeometry(0.018, 10, 10);
+      const eyeL = createAntComponent(eyeGeom, 0x08080a);
+      eyeL.group.position.set(0.20, 0.08, 0.055);
+      eyeL.group.scale.set(1, 1, 0.5); // Ojos alargados biológicamente precisos
+      const eyeR = createAntComponent(eyeGeom, 0x08080a);
+      eyeR.group.position.set(0.20, 0.08, -0.055);
+      eyeR.group.scale.set(1, 1, 0.5);
+      bodyContainer.add(eyeL.group);
+      bodyContainer.add(eyeR.group);
+      
+      // Antenas (Elegantes y curvadas en codo: Escapo + Flagelo según referencia)
+      const antennaL = new THREE.Group();
+      antennaL.position.set(0.22, 0.09, 0.03);
+      
+      const scapeGeom = new THREE.CylinderGeometry(0.004, 0.004, 0.07, 6);
+      scapeGeom.translate(0, 0.035, 0);
+      const scapeL = createAntComponent(scapeGeom, colorHex);
+      scapeL.group.rotation.set(-0.2, 0.3, -0.4);
+      antennaL.add(scapeL.group);
+
+      const flagGeom = new THREE.CylinderGeometry(0.003, 0.002, 0.10, 6);
+      flagGeom.translate(0, 0.05, 0);
+      const flagL = createAntComponent(flagGeom, colorHex);
+      flagL.group.position.set(-0.02, 0.06, 0.02);
+      flagL.group.rotation.set(0.1, -0.4, -1.1);
+      antennaL.add(flagL.group);
+
+      bodyContainer.add(antennaL);
+
+      const antennaR = new THREE.Group();
+      antennaR.position.set(0.22, 0.09, -0.03);
+      
+      const scapeR = createAntComponent(scapeGeom, colorHex);
+      scapeR.group.rotation.set(0.2, -0.3, -0.4);
+      antennaR.add(scapeR.group);
+
+      const flagR = createAntComponent(flagGeom, colorHex);
+      flagR.group.position.set(-0.02, 0.06, -0.02);
+      flagR.group.rotation.set(-0.1, 0.4, -1.1);
+      antennaR.add(flagR.group);
+
+      bodyContainer.add(antennaR);
+      
+      // Tórax en tres segmentos (Pronoto, Mesonoto, Propodeo)
+      const thoraxGroup = new THREE.Group();
+      bodyContainer.add(thoraxGroup);
+
+      const pronGeom = new THREE.SphereGeometry(0.055, 12, 12);
+      const pron = createAntComponent(pronGeom, colorHex);
+      pron.group.position.set(0.09, 0.03, 0);
+      pron.group.scale.set(1.2, 0.9, 0.9);
+      thoraxGroup.add(pron.group);
+
+      const mesoGeom = new THREE.SphereGeometry(0.045, 12, 12);
+      const meso = createAntComponent(mesoGeom, colorHex);
+      meso.group.position.set(0.03, 0.02, 0);
+      meso.group.scale.set(1.1, 0.8, 0.8);
+      thoraxGroup.add(meso.group);
+
+      const propGeom = new THREE.SphereGeometry(0.05, 12, 12);
+      const prop = createAntComponent(propGeom, colorHex);
+      prop.group.position.set(-0.03, 0.015, 0);
+      prop.group.scale.set(1.1, 0.9, 0.9);
+      thoraxGroup.add(prop.group);
+      
+      // Peciolo (Cintura hiper-delgada con nodo ascendente característico de la hormiga)
+      const petioleGroup = new THREE.Group();
+      bodyContainer.add(petioleGroup);
+
+      const petioleGeom = new THREE.CylinderGeometry(0.008, 0.008, 0.08, 6);
+      petioleGeom.rotateZ(Math.PI / 2);
+      const petioleConnect = createAntComponent(petioleGeom, colorHex);
+      petioleConnect.group.position.set(-0.07, 0.01, 0);
+      petioleGroup.add(petioleConnect.group);
+
+      const nodeGeom = new THREE.ConeGeometry(0.018, 0.035, 5);
+      const petioleNode = createAntComponent(nodeGeom, colorHex);
+      petioleNode.group.position.set(-0.07, 0.03, 0);
+      petioleGroup.add(petioleNode.group);
+      
+      // Abdomen (Gáster bulboso elipsoidal con rayas transversales)
+      const abdomenGeom = new THREE.SphereGeometry(0.11, 16, 16);
+      const abdomen = createAntComponent(abdomenGeom, colorHex);
+      abdomen.group.position.set(-0.17, 0.03, 0);
+      abdomen.group.scale.set(1.5, 0.9, 0.9);
+      bodyContainer.add(abdomen.group);
+
+      // Rayas abdominales de color crema según la referencia (toros acoplados a la elipse)
+      const stripeColor = 0xe2d6bd;
+      const stripeGeom = new THREE.TorusGeometry(0.111, 0.0045, 6, 24);
+      stripeGeom.rotateY(Math.PI / 2);
+      
+      const stripe1 = createAntComponent(stripeGeom, stripeColor);
+      stripe1.group.position.set(0.03, 0, 0);
+      stripe1.group.scale.set(1.0, 0.92, 0.92);
+      abdomen.group.add(stripe1.group);
+
+      const stripe2 = createAntComponent(stripeGeom, stripeColor);
+      stripe2.group.position.set(-0.01, 0, 0);
+      stripe2.group.scale.set(1.0, 0.99, 0.99);
+      abdomen.group.add(stripe2.group);
+
+      const stripe3 = createAntComponent(stripeGeom, stripeColor);
+      stripe3.group.position.set(-0.05, 0, 0);
+      stripe3.group.scale.set(1.0, 0.88, 0.88);
+      abdomen.group.add(stripe3.group);
+      
+      // Patas con articulación de color crema/beige en el codo (Femur + Tibia)
+      const legs = [];
+      const legPositions = [
+          { name: 'L1', x: 0.07, z: 0.05, rotY: 0.4 },
+          { name: 'L2', x: 0.03, z: 0.05, rotY: 0 },
+          { name: 'L3', x: -0.01, z: 0.05, rotY: -0.4 },
+          { name: 'R1', x: 0.07, z: -0.05, rotY: -0.4 },
+          { name: 'R2', x: 0.03, z: -0.05, rotY: 0 },
+          { name: 'R3', x: -0.01, z: -0.05, rotY: 0.4 }
+      ];
+
+      const femurGeom = new THREE.CylinderGeometry(0.009, 0.007, 0.08, 6);
+      const tibiaGeom = new THREE.CylinderGeometry(0.006, 0.004, 0.10, 6);
+      const jointGeom = new THREE.SphereGeometry(0.011, 8, 8);
+      
+      legPositions.forEach(pos => {
+          const pivot = new THREE.Group();
+          pivot.position.set(pos.x, 0.01, pos.z);
+          pivot.rotation.y = pos.rotY;
+          
+          const zSign = pos.z > 0 ? 1 : -1;
+          
+          // Fémur
+          const femur = createAntComponent(femurGeom, colorHex);
+          femur.group.position.set(0, -0.03, 0.025 * zSign);
+          femur.group.rotation.x = 0.45 * zSign;
+          pivot.add(femur.group);
+          
+          // Articulación crema
+          const joint = createAntComponent(jointGeom, 0xe2d6bd);
+          joint.group.position.set(0, -0.065, 0.042 * zSign);
+          pivot.add(joint.group);
+          
+          // Tibia
+          const tibia = createAntComponent(tibiaGeom, colorHex);
+          tibia.group.position.set(0, -0.105, 0.052 * zSign);
+          tibia.group.rotation.x = -0.35 * zSign;
+          pivot.add(tibia.group);
+          
+          bodyContainer.add(pivot);
+          legs.push({ 
+              name: pos.name, 
+              pivot: pivot, 
+              femurMesh: femur.mesh, 
+              tibiaMesh: tibia.mesh,
+              jointMesh: joint.mesh 
+          });
+      });
+      
+      // Guardar todos los meshes para poder actualizar sus materiales de forma dinámica en cambios de modo
+      const antMeshes = [
+          head.mesh, eyeL.mesh, eyeR.mesh,
+          scapeL.mesh, flagL.mesh, scapeR.mesh, flagR.mesh,
+          pron.mesh, meso.mesh, prop.mesh,
+          petioleConnect.mesh, petioleNode.mesh,
+          abdomen.mesh
+      ];
+      
+      const stripeMeshes = [stripe1.mesh, stripe2.mesh, stripe3.mesh];
+      const jointMeshes = [];
+      
+      legs.forEach(l => {
+          antMeshes.push(l.femurMesh);
+          antMeshes.push(l.tibiaMesh);
+          jointMeshes.push(l.jointMesh);
+      });
+      
+      allAntMeshes.push(...antMeshes);
+      allStripeMeshes.push(...stripeMeshes);
+      allJointMeshes.push(...jointMeshes);
+      
+      return {
+          group: antGroup,
+          bodyContainer: bodyContainer,
+          legs: legs,
+          antennaL: antennaL,
+          antennaR: antennaR,
+          eyeL: eyeL.mesh,
+          eyeR: eyeR.mesh,
+          meshes: antMeshes
+      };
+  }
+
+  // --- 4. INICIALIZACIÓN DE LA FILA DE HORMIGAS (MÁS GRANDES Y BAJAS EN EL SUELO) ---
+  function getRandomPersonality() {
+      const rand = Math.random();
+      if (rand < 0.45) return 'determined'; // 45%: camina sin detenerse
+      if (rand < 0.78) return 'curious';    // 33%: se para a veces a mirar
+      return 'confused';                    // 22%: comete errores y da la vuelta de 180°
+  }
+
+  const numAnts = 5;
+  for (let i = 0; i < numAnts; i++) {
+      const model = buildAntModel(0x111115);
+      
+      // Escalonar los puntos de partida de izquierda a derecha de forma espaciada
+      const scale = 1.10 + Math.random() * 0.25;
+      const speed = 0.38 + Math.random() * 0.32;
+      const x = -2.5 - (i * 0.9) - Math.random() * 0.5;
+      const z = -0.4 + Math.random() * 0.8;
+      
+      // y = -0.66 para forzar a las patitas de doble segmento a pisar justo encima del footer
+      model.group.position.set(x, -0.66, z);
+      model.group.scale.setScalar(scale);
+      scene.add(model.group);
+      
+      ants.push({
+          group: model.group,
+          bodyContainer: model.bodyContainer,
+          legs: model.legs,
+          antennaL: model.antennaL,
+          antennaR: model.antennaR,
+          eyeL: model.eyeL,
+          eyeR: model.eyeR,
+          x: x,
+          y: -0.66,
+          z: z,
+          scale: scale,
+          speed: speed,
+          personality: getRandomPersonality(),
+          state: 'walking',
+          stateTimer: 1.0 + Math.random() * 2.0,
+          walkTime: Math.random() * 20,
+          wiggleTime: Math.random() * 5
+      });
+  }
+
+  // --- 5. BUCLE TICK DE ANIMACIÓN & COMPORTAMIENTOS ---
+  const clock = new THREE.Clock();
+  
+  function tick() {
+      if (!isPlaying) return;
+      
+      const delta = Math.min(clock.getDelta(), 0.1);
+      const time = clock.getElapsedTime();
+      
+      ants.forEach(ant => {
+          ant.stateTimer -= delta;
+          
+          if (ant.state === 'walking') {
+              ant.x += ant.speed * delta;
+              ant.walkTime += delta * ant.speed * 26; // velocidad del braceo de patas
+              
+              // Braceo alternado (tripod gait de insectos)
+              const swing = Math.sin(ant.walkTime) * 0.55;
+              ant.legs.forEach(leg => {
+                  if (leg.name === 'L1' || leg.name === 'L3' || leg.name === 'R2') {
+                      leg.pivot.rotation.z = swing;
+                  } else {
+                      leg.pivot.rotation.z = -swing;
+                  }
+              });
+              
+              // Balanceo de cadera y cabeceo sutil al andar
+              ant.bodyContainer.position.y = Math.sin(ant.walkTime * 2) * 0.012;
+              ant.bodyContainer.rotation.y = 0;
+              
+              // Regresar antenas a su pose normal
+              ant.antennaL.rotation.y = THREE.MathUtils.lerp(ant.antennaL.rotation.y, 0, 0.1);
+              ant.antennaL.rotation.z = THREE.MathUtils.lerp(ant.antennaL.rotation.z, 0, 0.1);
+              ant.antennaR.rotation.y = THREE.MathUtils.lerp(ant.antennaR.rotation.y, 0, 0.1);
+              ant.antennaR.rotation.z = THREE.MathUtils.lerp(ant.antennaR.rotation.z, 0, 0.1);
+              
+              // Reorientar cuerpo a 0
+              ant.group.rotation.y = THREE.MathUtils.lerp(ant.group.rotation.y, 0, 0.15);
+
+              // Transiciones de estado basadas en la personalidad de la hormiga
+              if (ant.stateTimer <= 0) {
+                  if (ant.personality === 'determined') {
+                      // Las hormigas determinadas siguen de largo sin pararse
+                      ant.stateTimer = 1.5 + Math.random() * 2.0;
+                  } else if (ant.personality === 'curious') {
+                      // Las curiosas solo paran a observar a veces, nunca giran
+                      const r = Math.random();
+                      if (r < 0.28) {
+                          ant.state = 'pausing';
+                          ant.stateTimer = 0.5 + Math.random() * 0.8;
+                      } else {
+                          ant.stateTimer = 1.5 + Math.random() * 2.0;
+                      }
+                  } else if (ant.personality === 'confused') {
+                      // Las confundidas pueden activar la rutina de giro o simplemente pararse
+                      const r = Math.random();
+                      if (r < 0.22) {
+                          ant.state = 'pausing_before_turn';
+                          ant.stateTimer = 0.4 + Math.random() * 0.4;
+                      } else if (r < 0.45) {
+                          ant.state = 'pausing';
+                          ant.stateTimer = 0.6 + Math.random() * 0.8;
+                      } else {
+                          ant.stateTimer = 1.5 + Math.random() * 2.0;
+                      }
+                  }
+              }
+          } 
+          else if (ant.state === 'pausing') {
+              // Parado: wiggles de antenas divertidos (relativos a su eje codo)
+              ant.antennaL.rotation.y = Math.sin(time * 30) * 0.15;
+              ant.antennaL.rotation.z = Math.cos(time * 30) * 0.15;
+              
+              ant.antennaR.rotation.y = -Math.sin(time * 30) * 0.15;
+              ant.antennaR.rotation.z = -Math.cos(time * 30) * 0.15;
+              
+              // Piernas quietas en posición neutral
+              ant.legs.forEach(leg => {
+                  leg.pivot.rotation.z = THREE.MathUtils.lerp(leg.pivot.rotation.z, 0, 0.2);
+              });
+              ant.bodyContainer.position.y = THREE.MathUtils.lerp(ant.bodyContainer.position.y, 0, 0.2);
+              
+              if (ant.stateTimer <= 0) {
+                  ant.state = 'walking';
+                  ant.stateTimer = 1.5 + Math.random() * 3.0;
+              }
+          } 
+          else if (ant.state === 'pausing_before_turn') {
+              // Pararse antes de girar
+              ant.legs.forEach(leg => {
+                  leg.pivot.rotation.z = THREE.MathUtils.lerp(leg.pivot.rotation.z, 0, 0.2);
+              });
+              ant.bodyContainer.position.y = THREE.MathUtils.lerp(ant.bodyContainer.position.y, 0, 0.2);
+              
+              // Wiggles de antenas suaves de curiosidad
+              ant.antennaL.rotation.y = Math.sin(time * 20) * 0.08;
+              ant.antennaR.rotation.y = -Math.sin(time * 20) * 0.08;
+              
+              if (ant.stateTimer <= 0) {
+                  ant.state = 'turning_back';
+                  ant.stateTimer = 0.6; // tiempo para girar
+              }
+          }
+          else if (ant.state === 'turning_back') {
+              // Girar 180 grados (hacia la izquierda, Math.PI)
+              ant.group.rotation.y = THREE.MathUtils.lerp(ant.group.rotation.y, Math.PI, 0.12);
+              
+              // Braceo de patas rápido para simular pasos de pivote
+              ant.walkTime += delta * 15;
+              const swing = Math.sin(ant.walkTime) * 0.4;
+              ant.legs.forEach(leg => {
+                  if (leg.name === 'L1' || leg.name === 'L3' || leg.name === 'R2') {
+                      leg.pivot.rotation.z = swing;
+                  } else {
+                      leg.pivot.rotation.z = -swing;
+                  }
+              });
+              
+              if (ant.stateTimer <= 0) {
+                  ant.group.rotation.y = Math.PI; // asegurar orientación
+                  ant.state = 'walking_wrong_way';
+                  ant.stateTimer = 1.0 + Math.random() * 1.2; // camina al revés un buen tramo
+              }
+          }
+          else if (ant.state === 'walking_wrong_way') {
+              // Caminar hacia la izquierda (dirección incorrecta)
+              ant.x -= ant.speed * 0.8 * delta; // un poco más lento por duda
+              ant.walkTime += delta * ant.speed * 22;
+              
+              const swing = Math.sin(ant.walkTime) * 0.5;
+              ant.legs.forEach(leg => {
+                  if (leg.name === 'L1' || leg.name === 'L3' || leg.name === 'R2') {
+                      leg.pivot.rotation.z = swing;
+                  } else {
+                      leg.pivot.rotation.z = -swing;
+                  }
+              });
+              
+              ant.bodyContainer.position.y = Math.sin(ant.walkTime * 2) * 0.01;
+              ant.group.rotation.y = THREE.MathUtils.lerp(ant.group.rotation.y, Math.PI, 0.15);
+              
+              if (ant.stateTimer <= 0) {
+                  ant.state = 'pausing_wrong_way';
+                  ant.stateTimer = 0.8 + Math.random() * 0.9; // parada a recapacitar
+              }
+          }
+          else if (ant.state === 'pausing_wrong_way') {
+              // Pararse en dirección incorrecta y wiguelear nerviosamente las antenas
+              ant.legs.forEach(leg => {
+                  leg.pivot.rotation.z = THREE.MathUtils.lerp(leg.pivot.rotation.z, 0, 0.2);
+              });
+              ant.bodyContainer.position.y = THREE.MathUtils.lerp(ant.bodyContainer.position.y, 0, 0.2);
+              
+              // Wiggles rápidos y amplios (desconcierto total)
+              ant.antennaL.rotation.y = Math.sin(time * 38) * 0.22;
+              ant.antennaL.rotation.z = Math.cos(time * 38) * 0.22;
+              ant.antennaR.rotation.y = -Math.sin(time * 38) * 0.22;
+              ant.antennaR.rotation.z = -Math.cos(time * 38) * 0.22;
+              
+              // Cabeceo de desconcierto
+              ant.bodyContainer.rotation.y = Math.sin(time * 16) * 0.07;
+              
+              if (ant.stateTimer <= 0) {
+                  ant.state = 'turning_correct_way';
+                  ant.stateTimer = 0.6; // tiempo para reorientarse
+              }
+          }
+          else if (ant.state === 'turning_correct_way') {
+              // Girar de vuelta a la derecha (0 grados)
+              ant.group.rotation.y = THREE.MathUtils.lerp(ant.group.rotation.y, 0, 0.12);
+              
+              ant.walkTime += delta * 15;
+              const swing = Math.sin(ant.walkTime) * 0.4;
+              ant.legs.forEach(leg => {
+                  if (leg.name === 'L1' || leg.name === 'L3' || leg.name === 'R2') {
+                      leg.pivot.rotation.z = swing;
+                  } else {
+                      leg.pivot.rotation.z = -swing;
+                  }
+              });
+              
+              if (ant.stateTimer <= 0) {
+                  ant.group.rotation.y = 0; // forzar pose final
+                  ant.state = 'walking';
+                  ant.stateTimer = 2.0 + Math.random() * 3.0; // continuar alegremente
+              }
+          }
+          
+          // Actualizar posición final
+          ant.group.position.x = ant.x;
+          
+          // Reciclaje infinito cuando salen por el extremo derecho
+          const screenLimit = camera.right + 0.5;
+          if (ant.x > screenLimit) {
+              ant.x = camera.left - 0.5 - Math.random() * 0.5;
+              ant.z = -0.4 + Math.random() * 0.8;
+              ant.group.position.z = ant.z;
+              ant.speed = 0.38 + Math.random() * 0.32;
+              ant.scale = 1.05 + Math.random() * 0.25;
+              ant.group.scale.setScalar(ant.scale);
+              ant.group.rotation.y = 0; // RESET ROTATION
+              ant.personality = getRandomPersonality(); // Nueva personalidad al reaparecer
+              ant.state = 'walking';
+              ant.stateTimer = 1.0 + Math.random() * 2.0;
+          }
+      });
+
+      renderer.render(scene, camera);
+      rafId = requestAnimationFrame(tick);
+  }
+
+  function play() {
+      if (isPlaying) return;
+      isPlaying = true;
+      clock.getDelta();
+      rafId = requestAnimationFrame(tick);
+  }
+
+  function pause() {
+      isPlaying = false;
+      if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+      }
+  }
+
+  // --- 6. INTEGRACIÓN CON MODO OSCURO DE LA DIAPOSITIVA 3 ---
+  function applyThemeAnts() {
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      
+      // Colores de base e iluminación emisiva (radiactiva) para simular radiación atómica
+      // Modo claro: Negro piano brillante sin brillo emisivo
+      // Modo oscuro: Verde atómico / verde neón radiactivo puro (0x39FF14) con alto brillo emisivo
+      const color = dark ? 0x39FF14 : 0x0f0f11;
+      const stripeColor = dark ? 0xffffff : 0xe2d6bd;
+      const jointColor = dark ? 0x76FF03 : 0xe2d6bd;
+      const eyeColor = dark ? 0xFF3300 : 0x08080a;
+      
+      // Emisividad para lograr el efecto de radiación atómica luminiscente
+      const emissive = dark ? 0x39FF14 : 0x000000;
+      const emissiveInt = dark ? 1.2 : 0.0;
+      
+      const stripeEmissive = dark ? 0xffffff : 0x000000;
+      const stripeEmissiveInt = dark ? 1.8 : 0.0;
+      
+      const jointEmissive = dark ? 0x76FF03 : 0x000000;
+      const jointEmissiveInt = dark ? 1.5 : 0.0;
+      
+      const eyeEmissive = dark ? 0xFF2200 : 0x000000;
+      const eyeEmissiveInt = dark ? 2.0 : 0.0;
+      
+      allAntMeshes.forEach(mesh => {
+          mesh.material.color.setHex(color);
+          mesh.material.emissive.setHex(emissive);
+          mesh.material.emissiveIntensity = emissiveInt;
+      });
+      
+      allStripeMeshes.forEach(mesh => {
+          mesh.material.color.setHex(stripeColor);
+          mesh.material.emissive.setHex(stripeEmissive);
+          mesh.material.emissiveIntensity = stripeEmissiveInt;
+      });
+
+      allJointMeshes.forEach(mesh => {
+          mesh.material.color.setHex(jointColor);
+          mesh.material.emissive.setHex(jointEmissive);
+          mesh.material.emissiveIntensity = jointEmissiveInt;
+      });
+      
+      ants.forEach(ant => {
+          if (ant.eyeL) {
+              ant.eyeL.material.color.setHex(eyeColor);
+              ant.eyeL.material.emissive.setHex(eyeEmissive);
+              ant.eyeL.material.emissiveIntensity = eyeEmissiveInt;
+          }
+          if (ant.eyeR) {
+              ant.eyeR.material.color.setHex(eyeColor);
+              ant.eyeR.material.emissive.setHex(eyeEmissive);
+              ant.eyeR.material.emissiveIntensity = eyeEmissiveInt;
+          }
+      });
+  }
+
+  applyThemeAnts();
+  new MutationObserver(applyThemeAnts)
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // --- 7. REDIMENSIONAMIENTO ADAPTATIVO (RESIZING) ---
+  function onResize() {
+      if (!container) return;
+      const W = container.offsetWidth;
+      const H = container.offsetHeight;
+      const aspect = W / H;
+      const viewHeight = 1.6; // Ajuste óptimo de escala ortográfica para hacerlas grandes y nítidas
+      const viewWidth = viewHeight * aspect;
+      
+      camera.left = -viewWidth / 2;
+      camera.right = viewWidth / 2;
+      camera.top = viewHeight / 2;
+      camera.bottom = -viewHeight / 2;
+      camera.updateProjectionMatrix();
+      
+      renderer.setSize(W, H);
+  }
+  window.addEventListener('resize', onResize);
+
+  // --- 8. OPTIMIZACIÓN DE RENDIMIENTO (INTERSECTION OBSERVER) ---
+  new IntersectionObserver(
+      entries => entries[0].isIntersecting ? play() : pause(),
+      { threshold: 0.10 }
+  ).observe(slide);
+
+  setTimeout(onResize, 100);
 })();
 </script>
 </body>
