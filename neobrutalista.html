@@ -3378,6 +3378,67 @@
   const allStripeMeshes = [];
   const allJointMeshes = [];
 
+  // --- AUDIO PROCEDURAL DE LA MARSELLESA (WEB AUDIO API) ---
+  let audioCtx = null;
+  function initAudio() {
+      if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+      }
+  }
+  // Enlace a eventos de interacción del usuario para cumplir con las políticas de autoplay
+  window.addEventListener('click', initAudio);
+  window.addEventListener('touchstart', initAudio);
+  window.addEventListener('keydown', initAudio);
+
+  function playMarseillaise() {
+      initAudio();
+      if (!audioCtx) return;
+      
+      const now = audioCtx.currentTime;
+      
+      // Estructura de notas del himno nacional francés: Sol, Sol, Do, Do, Re, Re, Sol, Mi, Do
+      const melody = [
+          { note: 392.00, duration: 0.20 }, // Sol (G4) "Al-"
+          { note: 392.00, duration: 0.10 }, // Sol (G4) "-lons"
+          { note: 523.25, duration: 0.40 }, // Do (C5) "en-"
+          { note: 523.25, duration: 0.40 }, // Do (C5) "-fants"
+          { note: 587.33, duration: 0.40 }, // Re (D5) "de"
+          { note: 587.33, duration: 0.40 }, // Re (D5) "la"
+          { note: 783.99, duration: 0.65 }, // Sol (G5) "Pa-"
+          { note: 659.25, duration: 0.20 }, // Mi (E5) "-tri-"
+          { note: 523.25, duration: 0.65 }  // Do (C5) "-e"
+      ];
+      
+      let timeAccumulator = 0;
+      melody.forEach((item) => {
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          
+          // Onda tipo triángulo para un timbre suave, dulce y cómico como de flauta de juguete
+          osc.type = 'triangle';
+          osc.frequency.value = item.note;
+          
+          const startTime = now + timeAccumulator;
+          const endTime = startTime + item.duration;
+          
+          // Envolvente de amplitud ultra-limpia para evitar artefactos o clics de audio
+          gainNode.gain.setValueAtTime(0, startTime);
+          gainNode.gain.linearRampToValueAtTime(0.04, startTime + 0.03); // Volumen moderado, tierno e inmersivo
+          gainNode.gain.exponentialRampToValueAtTime(0.0001, endTime);
+          
+          osc.start(startTime);
+          osc.stop(endTime);
+          
+          timeAccumulator += item.duration + 0.02; // pequeño espacio entre notas
+      });
+  }
+
   // --- 1. CONFIGURACIÓN INICIAL DE THREE.JS ---
   scene = new THREE.Scene();
 
@@ -3622,6 +3683,40 @@
       allStripeMeshes.push(...stripeMeshes);
       allJointMeshes.push(...jointMeshes);
       
+      // --- BANDEJA DE HOMENAJE: BANDERA DE FRANCIA (ESTILO NEOBRUTALISTA / MINECRAFT) ---
+      const flagGroup = new THREE.Group();
+      flagGroup.position.set(0.12, 0.05, 0.06); 
+      flagGroup.scale.set(0, 0, 0); // Oculta por defecto al nacer
+      bodyContainer.add(flagGroup);
+
+      // Asta de la Bandera (Cilindro elegante de piano black - Más largo y robusto)
+      const poleGeom = new THREE.CylinderGeometry(0.006, 0.006, 0.62, 6);
+      poleGeom.translate(0, 0.31, 0); // Pivota desde el pie del asta
+      const pole = createAntComponent(poleGeom, 0x111115);
+      flagGroup.add(pole.group);
+
+      // Paño de la bandera en 3 franjas verticales Minecraft-style (Azul, Blanco, Rojo) - 2.5 veces más grandes
+      const stripeW = 0.052;
+      const stripeH = 0.120;
+      const stripeD = 0.006;
+      const clothGeom = new THREE.BoxGeometry(stripeW, stripeH, stripeD);
+      clothGeom.translate(stripeW / 2, 0, 0); // Desplazar pivote al borde izquierdo de la franja
+
+      // Franja Azul (Tricolore: Azul real) - Anclada directamente al asta
+      const flagBlue = createAntComponent(clothGeom, 0x00209F);
+      flagBlue.group.position.set(0, 0.48, 0);
+      flagGroup.add(flagBlue.group);
+
+      // Franja Blanca - Anclada jerárquicamente a la franja azul para evitar aberturas al rotar
+      const flagWhite = createAntComponent(clothGeom, 0xFFFFFF);
+      flagWhite.group.position.set(stripeW, 0, 0);
+      flagBlue.group.add(flagWhite.group);
+
+      // Franja Roja (Tricolore: Rojo vivo) - Anclada jerárquicamente a la franja blanca
+      const flagRed = createAntComponent(clothGeom, 0xE51D2A);
+      flagRed.group.position.set(stripeW, 0, 0);
+      flagWhite.group.add(flagRed.group);
+      
       return {
           group: antGroup,
           bodyContainer: bodyContainer,
@@ -3630,6 +3725,10 @@
           antennaR: antennaR,
           eyeL: eyeL.mesh,
           eyeR: eyeR.mesh,
+          flagGroup: flagGroup,
+          flagBlue: flagBlue.group,
+          flagWhite: flagWhite.group,
+          flagRed: flagRed.group,
           meshes: antMeshes
       };
   }
@@ -3637,9 +3736,9 @@
   // --- 4. INICIALIZACIÓN DE LA FILA DE HORMIGAS (MÁS GRANDES Y BAJAS EN EL SUELO) ---
   function getRandomPersonality() {
       const rand = Math.random();
-      if (rand < 0.45) return 'determined'; // 45%: camina sin detenerse
-      if (rand < 0.78) return 'curious';    // 33%: se para a veces a mirar
-      return 'confused';                    // 22%: comete errores y da la vuelta de 180°
+      if (rand < 0.40) return 'determined'; // 40%: camina sin detenerse
+      if (rand < 0.70) return 'curious';    // 30%: se para a veces a mirar
+      return 'confused';                    // 30%: comete errores y da la vuelta de 180° (antes 22%)
   }
 
   const numAnts = 5;
@@ -3665,6 +3764,10 @@
           antennaR: model.antennaR,
           eyeL: model.eyeL,
           eyeR: model.eyeR,
+          flagGroup: model.flagGroup,
+          flagBlue: model.flagBlue,
+          flagWhite: model.flagWhite,
+          flagRed: model.flagRed,
           x: x,
           y: -0.66,
           z: z,
@@ -3674,7 +3777,10 @@
           state: 'walking',
           stateTimer: 1.0 + Math.random() * 2.0,
           walkTime: Math.random() * 20,
-          wiggleTime: Math.random() * 5
+          wiggleTime: Math.random() * 5,
+          isFlagBearer: i === 2, // ¡Solo la tercera hormiga (del medio) tiene el honor de ser la portaestandarte!
+          hasPaidHomage: false,
+          hasTurnedBackThisLap: false
       });
   }
 
@@ -3707,6 +3813,7 @@
               // Balanceo de cadera y cabeceo sutil al andar
               ant.bodyContainer.position.y = Math.sin(ant.walkTime * 2) * 0.012;
               ant.bodyContainer.rotation.y = 0;
+              ant.bodyContainer.rotation.z = THREE.MathUtils.lerp(ant.bodyContainer.rotation.z, 0, 0.1); // Asegurar pose horizontal
               
               // Regresar antenas a su pose normal
               ant.antennaL.rotation.y = THREE.MathUtils.lerp(ant.antennaL.rotation.y, 0, 0.1);
@@ -3716,6 +3823,18 @@
               
               // Reorientar cuerpo a 0
               ant.group.rotation.y = THREE.MathUtils.lerp(ant.group.rotation.y, 0, 0.15);
+
+              // --- DISPARADOR DE HOMENAJE (ERGUIRSE Y SALUDAR A FRANCIA) AL LLEGAR AL CENTRO ---
+              // ¡Solo la hormiga designada portaestandarte (isFlagBearer) detiene su marcha y ondea la bandera!
+              if (ant.isFlagBearer && ant.x >= 0 && ant.x < 0.15 && !ant.hasPaidHomage) {
+                  const isAnyAntHomaging = ants.some(a => a.state === 'flag_homage' || a.state === 'lowering_flag');
+                  if (!isAnyAntHomaging) {
+                      ant.state = 'flag_homage';
+                      ant.stateTimer = 4.2; // Ondea la bandera por 4.2 segundos
+                      playMarseillaise(); // ¡Toca la Marsellesa procedimentalmente al izar la bandera!
+                  }
+                  ant.hasPaidHomage = true; // Se procesa de todos modos para que no intente de nuevo en este paso
+              }
 
               // Transiciones de estado basadas en la personalidad de la hormiga
               if (ant.stateTimer <= 0) {
@@ -3732,12 +3851,12 @@
                           ant.stateTimer = 1.5 + Math.random() * 2.0;
                       }
                   } else if (ant.personality === 'confused') {
-                      // Las confundidas pueden activar la rutina de giro o simplemente pararse
+                      // Las confundidas pueden activar la rutina de giro si no lo han hecho ya en esta vuelta
                       const r = Math.random();
-                      if (r < 0.22) {
+                      if (r < 0.38 && !ant.hasTurnedBackThisLap) { // ¡Solo una vez por vuelta para evitar bucles infinitos!
                           ant.state = 'pausing_before_turn';
                           ant.stateTimer = 0.4 + Math.random() * 0.4;
-                      } else if (r < 0.45) {
+                      } else if (r < 0.60) { // Aumentado de 0.45 a 0.60
                           ant.state = 'pausing';
                           ant.stateTimer = 0.6 + Math.random() * 0.8;
                       } else {
@@ -3863,6 +3982,104 @@
                   ant.group.rotation.y = 0; // forzar pose final
                   ant.state = 'walking';
                   ant.stateTimer = 2.0 + Math.random() * 3.0; // continuar alegremente
+                  ant.hasTurnedBackThisLap = true; // ¡Marcamos que ya se confundió esta vuelta!
+              }
+          }
+          else if (ant.state === 'flag_homage') {
+              // Erguirse: rotar bodyContainer hacia atrás en el eje Z de forma suave (rearing up!)
+              ant.bodyContainer.rotation.z = THREE.MathUtils.lerp(ant.bodyContainer.rotation.z, 0.95, 0.1);
+              
+              // Ondeado Humano Rítmico (Movimiento en abanico / Ocho):
+              // El brazo izquierdo (L1) realiza un sweep o abanico lateral muy amplio (simulando a una persona ondeando)
+              // Combinamos oscilaciones desfasadas en los ejes Y y Z para trazar una hermosa trayectoria elíptica tridimensional
+              const sweepTime = time * 6.5; // Frecuencia del braceo de abanico (solemne y pesado)
+              
+              ant.legs.forEach(leg => {
+                  if (leg.name === 'L1') {
+                      // Pata que sostiene el asta: barrido tridimensional fluido
+                      leg.pivot.rotation.z = -0.4 + Math.sin(sweepTime) * 0.38; // Rango vertical
+                      leg.pivot.rotation.y = 0.35 + Math.cos(sweepTime) * 0.45; // Amplio movimiento horizontal de izquierda a derecha
+                      leg.pivot.rotation.x = Math.sin(sweepTime * 2) * 0.12;    // Sutil figura en ocho
+                  } else if (leg.name === 'R1') {
+                      // Pata derecha celebra al aire de forma expresiva y equilibrada
+                      leg.pivot.rotation.z = -0.5 - Math.sin(time * 14) * 0.40;
+                      leg.pivot.rotation.y = -0.2 - Math.cos(time * 14) * 0.15;
+                  } else {
+                      // Piernas de apoyo estables en el suelo
+                      leg.pivot.rotation.z = THREE.MathUtils.lerp(leg.pivot.rotation.z, 0, 0.25);
+                      leg.pivot.rotation.y = THREE.MathUtils.lerp(leg.pivot.rotation.y, 0, 0.25);
+                  }
+              });
+
+              // Mostrar e izar la bandera francesa con un escalado suave
+              if (ant.flagGroup) {
+                  ant.flagGroup.scale.lerp(new THREE.Vector3(1, 1, 1), 0.12);
+                  
+                  // Inercia rotacional del Asta:
+                  // El asta se inclina ligeramente en la dirección opuesta al barrido del brazo, imitando el peso físico de un estandarte real
+                  ant.flagGroup.rotation.y = Math.cos(sweepTime) * 0.25;
+                  ant.flagGroup.rotation.z = -Math.sin(sweepTime) * 0.10;
+              }
+
+              // ONDULACIÓN DE PROPAGACIÓN FÍSICA (TELA DE SEDA TRICOLOR):
+              // Animamos cada franja de forma consecutiva con un desfase (phase lag) para simular la flexibilidad del tejido.
+              // Como flagWhite es hija de flagBlue, y flagRed es hija de flagWhite, las rotaciones se acumulan de forma aditiva y orgánica,
+              // asegurando un movimiento de onda continua impecable y SIN aberturas ni gaps.
+              const flutterTime = time * 16.0; // Frecuencia alta de aleteo (simulando resistencia al viento)
+              if (ant.flagBlue && ant.flagWhite && ant.flagRed) {
+                  ant.flagBlue.rotation.y = Math.sin(flutterTime) * 0.18;
+                  ant.flagWhite.rotation.y = Math.sin(flutterTime - 0.7) * 0.28;
+                  ant.flagRed.rotation.y = Math.sin(flutterTime - 1.4) * 0.38;
+                  
+                  // Añadimos una ligera flexión de sustentación en el eje Z
+                  ant.flagBlue.rotation.z = Math.cos(flutterTime) * 0.04;
+                  ant.flagWhite.rotation.z = Math.cos(flutterTime - 0.7) * 0.06;
+                  ant.flagRed.rotation.z = Math.cos(flutterTime - 1.4) * 0.08;
+              }
+
+              // Mover antenas con regocijo y emoción patria
+              ant.antennaL.rotation.y = Math.sin(time * 26) * 0.20;
+              ant.antennaL.rotation.z = Math.cos(time * 26) * 0.20;
+              ant.antennaR.rotation.y = -Math.sin(time * 26) * 0.20;
+              ant.antennaR.rotation.z = -Math.cos(time * 26) * 0.20;
+
+              if (ant.stateTimer <= 0) {
+                  ant.state = 'lowering_flag';
+                  ant.stateTimer = 1.0; // Transición de bajada
+              }
+          }
+          else if (ant.state === 'lowering_flag') {
+              // Bajar la bandera encogiéndola suavemente a 0
+              if (ant.flagGroup) {
+                  ant.flagGroup.scale.lerp(new THREE.Vector3(0, 0, 0), 0.15);
+                  ant.flagGroup.rotation.y = THREE.MathUtils.lerp(ant.flagGroup.rotation.y, 0, 0.15);
+                  ant.flagGroup.rotation.z = THREE.MathUtils.lerp(ant.flagGroup.rotation.z, 0, 0.15);
+              }
+              
+              // Regresar las franjas de la bandera a su pose neutra de forma suave
+              if (ant.flagBlue && ant.flagWhite && ant.flagRed) {
+                  ant.flagBlue.rotation.y = THREE.MathUtils.lerp(ant.flagBlue.rotation.y, 0, 0.15);
+                  ant.flagWhite.rotation.y = THREE.MathUtils.lerp(ant.flagWhite.rotation.y, 0, 0.15);
+                  ant.flagRed.rotation.y = THREE.MathUtils.lerp(ant.flagRed.rotation.y, 0, 0.15);
+                  
+                  ant.flagBlue.rotation.z = THREE.MathUtils.lerp(ant.flagBlue.rotation.z, 0, 0.15);
+                  ant.flagWhite.rotation.z = THREE.MathUtils.lerp(ant.flagWhite.rotation.z, 0, 0.15);
+                  ant.flagRed.rotation.z = THREE.MathUtils.lerp(ant.flagRed.rotation.z, 0, 0.15);
+              }
+              
+              // Regresar cuerpo a pose horizontal normal
+              ant.bodyContainer.rotation.z = THREE.MathUtils.lerp(ant.bodyContainer.rotation.z, 0, 0.12);
+              
+              // Regresar patas a posición neutra
+              ant.legs.forEach(leg => {
+                  leg.pivot.rotation.z = THREE.MathUtils.lerp(leg.pivot.rotation.z, 0, 0.25);
+                  leg.pivot.rotation.y = THREE.MathUtils.lerp(leg.pivot.rotation.y, 0, 0.25);
+                  leg.pivot.rotation.x = THREE.MathUtils.lerp(leg.pivot.rotation.x, 0, 0.25);
+              });
+              
+              if (ant.stateTimer <= 0) {
+                  ant.state = 'walking';
+                  ant.stateTimer = 1.5 + Math.random() * 2.0;
               }
           }
           
@@ -3882,6 +4099,8 @@
               ant.personality = getRandomPersonality(); // Nueva personalidad al reaparecer
               ant.state = 'walking';
               ant.stateTimer = 1.0 + Math.random() * 2.0;
+              ant.hasPaidHomage = false; // ¡Reset del estado de homenaje para el nuevo ciclo!
+              ant.hasTurnedBackThisLap = false; // ¡Reset del estado de retroceso para la nueva vuelta!
           }
       });
 
