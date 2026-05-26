@@ -3381,17 +3381,31 @@
   // --- AUDIO PROCEDURAL DE LA MARSELLESA (WEB AUDIO API) ---
   let audioCtx = null;
   function initAudio() {
-      if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx && audioCtx.state === 'suspended') {
-          audioCtx.resume();
+      try {
+          if (!audioCtx) {
+              audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (audioCtx && audioCtx.state === 'suspended') {
+              audioCtx.resume().then(() => {
+                  // Tocar un buffer silencioso de prueba para forzar el desbloqueo en Safari/iOS y entornos HTTPS estrictos
+                  const osc = audioCtx.createOscillator();
+                  const gainNode = audioCtx.createGain();
+                  gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+                  osc.connect(gainNode);
+                  gainNode.connect(audioCtx.destination);
+                  osc.start(0);
+                  osc.stop(0.01);
+                  console.log("AudioContext desbloqueado y activo con éxito:", audioCtx.state);
+              }).catch(err => console.warn("Error al reanudar AudioContext:", err));
+          }
+      } catch (e) {
+          console.error("Error al inicializar AudioContext:", e);
       }
   }
-  // Enlace a eventos de interacción del usuario para cumplir con las políticas de autoplay
-  window.addEventListener('click', initAudio);
-  window.addEventListener('touchstart', initAudio);
-  window.addEventListener('keydown', initAudio);
+  // Enlace exhaustivo a eventos de interacción del usuario para cumplir con las políticas de autoplay más estrictas en HTTPS
+  ['click', 'touchstart', 'touchend', 'pointerdown', 'mousedown', 'keydown'].forEach(evtType => {
+      window.addEventListener(evtType, initAudio, { passive: true });
+  });
 
   function playMarseillaise() {
       initAudio();
